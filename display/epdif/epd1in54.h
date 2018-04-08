@@ -60,7 +60,7 @@ public:
     int width;
     int height;
 
-    Epd();
+    Epd(unsigned int reset_pin, unsigned int dc_pin, unsigned int cs_pin, unsigned int busy_pin, int width, int height);
     ~Epd();
     int  Init(const unsigned char* lut);
     void SendCommand(unsigned char command);

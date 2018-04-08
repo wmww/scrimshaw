@@ -3,17 +3,21 @@
 #include "../display.h"
 #include "../vec2.h"
 
+class Epd;
+
 class EpdifDisplay: public Display
 {
 public:
 	struct Pins
 	{
-		int rst, dc, cs, busy;
+		unsigned int rst, dc, cs, busy;
 	};
 
-	EpdifDisplay(const Pins& pins, const Vec2i& size);
+	EpdifDisplay(Pins const& pins, Vec2i const& size);
+	~EpdifDisplay();
 
 private:
-	const Pins pins;
-	const Vec2i size;
+	Pins const pins;
+	Vec2i const size;
+	std::unique_ptr<Epd> const epd;
 };

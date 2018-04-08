@@ -30,13 +30,13 @@
 Epd::~Epd() {
 };
 
-Epd::Epd() {
-    reset_pin = RST_PIN;
-    dc_pin = DC_PIN;
-    cs_pin = CS_PIN;
-    busy_pin = BUSY_PIN;
-    width = EPD_WIDTH;
-    height = EPD_HEIGHT;
+Epd::Epd(unsigned int reset_pin, unsigned int dc_pin, unsigned int cs_pin, unsigned int busy_pin, int width, int height) {
+    this->reset_pin = reset_pin;
+    this->dc_pin = dc_pin;
+    this->cs_pin = cs_pin;
+    this->busy_pin = busy_pin;
+    this->width = width;
+    this->height = height;
 };
 
 int Epd::Init(const unsigned char* lut) {
@@ -48,8 +48,8 @@ int Epd::Init(const unsigned char* lut) {
     this->lut = lut;
     Reset();
     SendCommand(DRIVER_OUTPUT_CONTROL);
-    SendData((EPD_HEIGHT - 1) & 0xFF);
-    SendData(((EPD_HEIGHT - 1) >> 8) & 0xFF);
+    SendData((height - 1) & 0xFF);
+    SendData(((height - 1) >> 8) & 0xFF);
     SendData(0x00);                     // GD = 0; SM = 0; TB = 0;
     SendCommand(BOOSTER_SOFT_START_CONTROL);
     SendData(0xD7);
