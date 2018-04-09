@@ -7,7 +7,7 @@ try:
 	# use GPIO pin numbering
 	GPIO.setmode(GPIO.BCM)
 
-	GPIO.setup(pin, GPIO.IN)
+	GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 	for i in range(50):
 		if GPIO.input(pin):
