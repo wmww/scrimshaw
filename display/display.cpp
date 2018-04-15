@@ -6,7 +6,7 @@
 const EpdifDisplay::Pins epdif_pins = {
 	17, // RST
 	25, // DC
-	8,  // CS
+	8, // CS
 	24, // BUSY
 };
 
