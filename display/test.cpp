@@ -1,10 +1,10 @@
 #include "display.h"
 
-#include <iostream>
+#include "../util/logger.h"
 
 int main()
 {
 	auto display = Display::get();
-	std::cout << "got display" << std::endl;
+	log_message("got display");
 	return 0;
 }

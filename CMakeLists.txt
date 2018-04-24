@@ -15,7 +15,9 @@ link_directories(${GTK3_LIBRARY_DIRS})
 # Add other flags to the compiler
 add_definitions(${GTK3_CFLAGS_OTHER})
 
-file(GLOB SOURCES "display/*.cpp" "display/epdif/*.cpp")
+file(GLOB SOURCES util/*.cpp display/*.cpp display/epdif/*.cpp)
+
+include_directories("util")
 
 add_executable(display_test ${SOURCES})
 

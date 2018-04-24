@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include "vec2.h"
 
 class Display
 {

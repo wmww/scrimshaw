@@ -1,7 +1,6 @@
 #pragma once
 
 #include "display.h"
-#include "vec2.h"
 
 class Epd;
 

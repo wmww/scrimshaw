@@ -1,6 +1,6 @@
 #include "gtk_display.h"
 
-#include <iostream>
+#include "logger.h"
 
 GtkDisplay::GtkDisplay(Vec2i const& request_size) : size{request_size}
 {
@@ -53,8 +53,9 @@ void GtkDisplay::on_window_draw()
 											  nullptr);
 	if (err)
 	{
-		std::cerr << "GTK ERROR:" << err->message << std::endl;
+		log_error(std::string("GTK ERROR: ") + err->message);
 		g_error_free(err);
+		return;
 	}
 	cairo_rectangle_int_t cairo_rect = {0, 0, size.x, size.y};
 	cairo_region_t* region = cairo_region_create_rectangle(&cairo_rect);

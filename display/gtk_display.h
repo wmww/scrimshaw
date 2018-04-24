@@ -2,8 +2,6 @@
 
 #include "display.h"
 
-#include "vec2.h"
-
 #include <gtk/gtk.h>
 
 class GtkDisplay : public Display

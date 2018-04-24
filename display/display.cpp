@@ -2,7 +2,6 @@
 
 #include "epdif_display.h"
 #include "gtk_display.h"
-#include "vec2.h"
 
 EpdifDisplay::Pins const epdif_pins = {
 	17, // RST
