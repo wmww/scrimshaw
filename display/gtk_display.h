@@ -11,4 +11,10 @@ class GtkDisplay : public Display
 public:
 	GtkDisplay(Vec2i const& size);
 	~GtkDisplay() = default;
+
+private:
+	void setup_window();
+
+	GtkApplication* app;
+	Vec2i const size;
 };
