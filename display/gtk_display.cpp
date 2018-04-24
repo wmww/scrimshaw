@@ -56,16 +56,12 @@ void GtkDisplay::on_window_draw()
 		std::cerr << "GTK ERROR:" << err->message << std::endl;
 		g_error_free(err);
 	}
-	if (canvas == nullptr)
-	{
-		std::cerr << "null cancas" << std::endl;
-	}
-	std::cerr << "window size: " << size.x << std::endl;
-	cairo_t* cr = gdk_cairo_create(gtk_widget_get_window(canvas));
-	//    cr = gdk_cairo_create (da->window);
-	gdk_cairo_set_source_pixbuf(cr, pix, 0, 0);
-	cairo_paint(cr);
-	//    cairo_fill (cr);
-	cairo_destroy(cr);
-	//    return FALSE;
+	cairo_rectangle_int_t cairo_rect = {0, 0, size.x, size.y};
+	cairo_region_t* region = cairo_region_create_rectangle(&cairo_rect);
+	GdkDrawingContext* drawing_context = gdk_window_begin_draw_frame(gtk_widget_get_window(canvas), region);
+	cairo_region_destroy(region);
+	cairo_t* cairo_context = gdk_drawing_context_get_cairo_context(drawing_context);
+	gdk_cairo_set_source_pixbuf(cairo_context, pix, 0, 0);
+	cairo_paint(cairo_context);
+	gdk_window_end_draw_frame(gtk_widget_get_window(canvas), drawing_context);
 }
