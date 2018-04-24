@@ -1,18 +1,20 @@
-
 #include "display.h"
-#include "epdif/epdif_display.h"
+
+#include "epdif_display.h"
+#include "gtk_display.h"
 #include "vec2.h"
 
-const EpdifDisplay::Pins epdif_pins = {
+EpdifDisplay::Pins const epdif_pins = {
 	17, // RST
 	25, // DC
 	8, // CS
 	24, // BUSY
 };
 
-const Vec2i epdif_size{200, 200}; // this is wrong
+Vec2i const epdif_size{200, 200}; // this is wrong
 
 std::unique_ptr<Display> Display::get()
 {
-	return std::make_unique<EpdifDisplay>(epdif_pins, epdif_size);
+	// return std::make_unique<EpdifDisplay>(epdif_pins, epdif_size);
+	return std::make_unique<GtkDisplay>(epdif_size);
 }

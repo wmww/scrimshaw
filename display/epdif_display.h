@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../display.h"
-#include "../vec2.h"
+#include "display.h"
+#include "vec2.h"
 
 class Epd;
 
-class EpdifDisplay: public Display
+class EpdifDisplay : public Display
 {
 public:
 	struct Pins

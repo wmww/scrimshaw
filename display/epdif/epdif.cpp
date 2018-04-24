@@ -26,8 +26,11 @@
  */
 
 #include "epdif.h"
+
+#ifndef DISABLE_WIRING_PI
 #include <wiringPi.h>
 #include <wiringPiSPI.h>
+#endif
 
 EpdIf::EpdIf() {
 };
@@ -35,29 +38,43 @@ EpdIf::~EpdIf() {
 };
 
 void EpdIf::DigitalWrite(int pin, int value) {
+    #ifndef DISABLE_WIRING_PI
     digitalWrite(pin, value);
+    #endif
 }
 
 int EpdIf::DigitalRead(int pin) {
+    #ifndef DISABLE_WIRING_PI
     return digitalRead(pin);
+    #else
+    return 0;
+    #endif
 }
 
 void EpdIf::DelayMs(unsigned int delaytime) {
+    #ifndef DISABLE_WIRING_PI
     delay(delaytime);
+    #endif
 }
 
 void EpdIf::SpiTransfer(unsigned char data) {
+    #ifndef DISABLE_WIRING_PI
     wiringPiSPIDataRW(0, &data, 1);
+    #endif
 }
 
 int EpdIf::IfInit(void) {
+    #ifndef DISABLE_WIRING_PI
     if(wiringPiSetupGpio() < 0) {    // using Broadcom GPIO pin mapping
         return -1;
     }
     pinMode(RST_PIN, OUTPUT);
     pinMode(DC_PIN, OUTPUT);
-    pinMode(BUSY_PIN, INPUT); 
+    pinMode(BUSY_PIN, INPUT);
     wiringPiSPISetup(0, 2000000);
     return 0;
+    #else
+    return -1;
+    #endif
 }
 
