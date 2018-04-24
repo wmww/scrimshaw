@@ -13,8 +13,9 @@ public:
 	~GtkDisplay() = default;
 
 private:
-	void setup_window();
+	void on_window_draw();
 
-	GtkApplication* app;
 	Vec2i const size;
+	GtkWidget* window;
+	GtkWidget* canvas;
 };
