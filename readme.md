@@ -1,3 +1,3 @@
 # Project Scrimshaw
 
-Code for my WIP Raspbery Pi baes E-ink smartwatch prototype.
+Code for my WIP Raspbery Pi based E-ink smartwatch prototype.
