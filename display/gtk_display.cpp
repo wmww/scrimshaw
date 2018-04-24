@@ -23,6 +23,11 @@ GtkDisplay::GtkDisplay(Vec2i const& request_size) : size{request_size}
 	gtk_main();
 }
 
+void GtkDisplay::update(Vec2i lower_left, Vec2i size, bool* data)
+{
+	log_warning("not implemented");
+}
+
 void GtkDisplay::on_window_draw()
 {
 	GError* err = nullptr;

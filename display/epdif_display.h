@@ -15,6 +15,8 @@ public:
 	EpdifDisplay(Pins const& pins, Vec2i const& size);
 	~EpdifDisplay();
 
+	void update(Vec2i lower_left, Vec2i size, bool* data);
+
 private:
 	Pins const pins;
 	Vec2i const size;
