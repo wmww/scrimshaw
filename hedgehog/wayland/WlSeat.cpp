@@ -141,7 +141,7 @@ void WlSeat::pointerMotion(V2d position, Resource surface)
 	}
 	ASSERT_ELSE(surface.isValid(), return);
 	Resource pointer = impl->pointer;
-	auto fixedPos = V2<wl_fixed_t>(wl_fixed_from_double(position.x), wl_fixed_from_double(position.y));
+	auto fixedPos = Vec2<wl_fixed_t>(wl_fixed_from_double(position.x), wl_fixed_from_double(position.y));
 	if (impl->lastPointerSurfaceRaw != surface.getRaw())
 	{
 		if (pointer.check(WL_POINTER_ENTER_SINCE_VERSION))

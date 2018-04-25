@@ -10,7 +10,7 @@ EpdifDisplay::Pins const epdif_pins = {
 	24, // BUSY
 };
 
-Vec2i const epdif_size{200, 200}; // this is wrong
+Vec2i const epdif_size{296, 128}; // this is wrong
 
 std::unique_ptr<Display> Display::get()
 {

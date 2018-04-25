@@ -13,6 +13,7 @@ struct WlSurface::Impl: Resource::Data, InputInterface
 {
 	// instance data
 	V2d dim;
+    V2d clipPos, clipDim;
 	bool isDamaged = false;
 	Texture texture;
 	wl_resource * bufferResourceRaw;
@@ -128,7 +129,7 @@ const struct wl_surface_interface WlSurface::Impl::surfaceInterface = {
 				uint32_t height = wl_shm_buffer_get_height(shmBuffer);
 				bufferDim = V2i(width, height);
 				void * data = wl_shm_buffer_get_data(shmBuffer);
-				impl->texture.loadFromData(data, bufferDim, wl_shm_buffer_get_format(shmBuffer));
+				impl->texture.loadFromData(data, bufferDim, wl_shm_buffer_get_format(shmBuffer), impl->clipPos, impl->clipDim, Backend::instance->getDim());
                 wl_shm_buffer_end_access(shmBuffer);
 			}
 			else
@@ -196,4 +197,11 @@ Texture WlSurface::getTexture()
 weak_ptr<InputInterface> WlSurface::getInputInterface()
 {
 	return impl;
+}
+
+void WlSurface::set_clip(V2d pos, V2d dim)
+{
+    IMPL_ELSE(return);
+    impl->clipPos = pos;
+    impl->clipDim = dim;
 }

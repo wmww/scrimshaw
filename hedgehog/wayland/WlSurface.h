@@ -17,6 +17,8 @@ public:
 	
 	weak_ptr<InputInterface> getInputInterface();
 	Texture getTexture();
+    
+    void set_clip(Vec2d low, Vec2d high);
 	
 private:
 	struct Impl;

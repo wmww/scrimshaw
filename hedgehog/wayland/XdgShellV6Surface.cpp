@@ -2,6 +2,7 @@
 #include "Resource.h"
 #include "../scene/WindowInterface.h"
 #include "WlArray.h"
+#include "../backend/Backend.h"
 
 #include <wayland-server-protocol.h>
 #include "protocols/xdg-shell-unstable-v6.h"
@@ -48,7 +49,8 @@ const struct zxdg_surface_v6_interface XdgShellV6Surface::Impl::xdgSurfaceV6Inte
 		
 		WlArray<zxdg_toplevel_v6_state> states;
 		states.append(ZXDG_TOPLEVEL_V6_STATE_ACTIVATED);
-		zxdg_toplevel_v6_send_configure(impl->xdgToplevelResource.getRaw(), 0, 0, states.getRaw());
+        V2i size = Backend::instance->getDim();
+		zxdg_toplevel_v6_send_configure(impl->xdgToplevelResource.getRaw(), size.x, size.y, states.getRaw());
 		/*
 		wl_array states;
 		wl_array_init(&states);
@@ -99,7 +101,8 @@ const struct zxdg_surface_v6_interface XdgShellV6Surface::Impl::xdgSurfaceV6Inte
 	+[](struct wl_client *client, struct wl_resource *resource, int32_t x, int32_t y, int32_t width, int32_t height)
 	{
 		debug("zxdg_surface_v6_interface::set_window_geometry called");
-		// we don't need to handle this yet
+		IMPL_FROM(resource);
+        impl->waylandSurface.set_clip(V2d(x, y), V2d(width, height));
 	},
 	// ack_configure
 	+[](struct wl_client *client, struct wl_resource *resource, uint32_t serial)

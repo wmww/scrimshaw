@@ -148,22 +148,29 @@ void Texture::setupEmpty()
 		impl = make_shared<Impl>();
 }
 
-void Texture::loadFromData(void * data, V2i dim, uint32_t format)
+void Texture::loadFromData(void * data, Vec2i dataDim, uint32_t format, Vec2d clipPos, Vec2d clipDim, Vec2i outputDim)
 {
 	setupEmpty();
     ASSERT(format == WL_SHM_FORMAT_ARGB8888);
-	impl->data = new bool[dim.x * dim.y];
-	impl->dim = dim;
-    for (int i = 0; i < dim.x * dim.y; i++)
+    struct Color
     {
-        struct Color
+        unsigned char a, r, g, b;
+    };
+	impl->data = new bool[outputDim.x * outputDim.y];
+	impl->dim = outputDim;
+    Vec2d o;
+    for (o.y = 0; o.y < outputDim.y; o.y++)
+    {
+        for (o.x = 0; o.x < outputDim.x; o.x++)
         {
-            unsigned char a, r, g, b;
-        };
-        
-        Color color = ((Color*)data)[i];
-        
-        impl->data[i] = (color.r + color.g + color.b) > 128 * 3;
+            Vec2d i = (o * (clipDim)) / Vec2d(outputDim) + clipPos;
+            Vec2i ii = i;
+            if (ii.x >= 0 && ii.y >= 0 && ii.x < dataDim.x && ii.y < dataDim.y)
+            {
+                Color color = ((Color*)data)[ii.x + dataDim.x * ii.y];
+                impl->data[(int)o.x + outputDim.x * (int)o.y] = (color.r + color.g + color.b) > 128 * 3;
+            }
+        }
     }
 }
 

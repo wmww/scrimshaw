@@ -13,6 +13,11 @@ struct BackendScrimshaw: Backend
 	
 	~BackendScrimshaw() = default;
 	
+    Vec2i getDim()
+    {
+        return display->get_size();
+    }
+    
     void draw(Texture texture, V2d pos)
     {
         display->draw(

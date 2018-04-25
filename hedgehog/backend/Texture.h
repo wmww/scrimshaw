@@ -9,7 +9,7 @@ public:
 	Texture() {}
 	
 	void setupEmpty();
-	void loadFromData(void * data, V2i dim, uint32_t format);
+	void loadFromData(void * data, Vec2i dataDim, uint32_t format, Vec2d clipPos, Vec2d clipDim, Vec2i outputDim);
     V2i get_dim();
     bool * get_data();
 	

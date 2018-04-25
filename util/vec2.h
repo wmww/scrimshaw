@@ -33,12 +33,14 @@ struct Vec2
 		y -= other.y;
 	}
 	inline Vec2<T> operator*(T value) const { return Vec2<T>(x * value, y * value); }
+	inline Vec2<T> operator*(Vec2<T> const& value) const { return Vec2<T>(x * value.x, y * value.y); }
 	inline void operator*=(T value)
 	{
 		x *= value;
 		y *= value;
 	}
 	inline Vec2<T> operator/(T value) const { return Vec2<T>(x / value, y / value); }
+	inline Vec2<T> operator/(Vec2<T> const& value) const { return Vec2<T>(x / value.x, y / value.y); }
 	inline void operator/=(T value)
 	{
 		x /= value;

@@ -7,6 +7,7 @@
 class Backend
 {
 public:
+    virtual Vec2i getDim() = 0;
     virtual void draw(Texture texture, V2d pos) = 0;
 	virtual void swapBuffer() = 0;
 	virtual void checkEvents() = 0;

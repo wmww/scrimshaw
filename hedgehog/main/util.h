@@ -25,21 +25,10 @@ using std::function;
 #include <GL/glew.h>
 #include <GL/gl.h>
 
-// a simple 2D vector class (vector in the x, y sense, not the array sense)
-template<typename T>
-struct V2
-{
-	T x, y;
-	
-	V2() { x = y = T(); }
-	V2(T xIn, T yIn) { x = xIn; y = yIn; }
-};
+#include "vec2.h"
 
-template<typename T>
-string to_string(V2<T> in) { return "(" + to_string(in.x) + ", " + to_string(in.y) + ")"; }
-
-typedef V2<int> V2i;
-typedef V2<double> V2d;
+typedef Vec2i V2i;
+typedef Vec2d V2d;
 
 #define FUNC string(__FUNCTION__)
 
