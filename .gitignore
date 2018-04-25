@@ -2,3 +2,4 @@
 *_bin
 */bin
 build/
+*.kdev4

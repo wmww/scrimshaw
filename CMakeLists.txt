@@ -24,4 +24,4 @@ add_executable(display_test ${SOURCES})
 target_compile_definitions(display_test PRIVATE DISABLE_WIRING_PI)
 
 # Link the target to the GTK+ libraries
-target_link_libraries(display_test ${GTK3_LIBRARIES})
+target_link_libraries(display_test ${GTK3_LIBRARIES} -lpthread)

@@ -2,8 +2,14 @@
 
 #include "logger.h"
 
-GtkDisplay::GtkDisplay(Vec2i const& request_size) : size{request_size}
+#include <unistd.h>
+
+GtkDisplay::GtkDisplay(Vec2i const& request_size) : size{request_size}, pixels{new Color[request_size.size()]}
 {
+	for (int i = 0; i < request_size.size(); i++)
+	{
+		pixels[i] = off_color;
+	}
 	gtk_init(0, nullptr);
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	// gtk_widget_set_size_request (window, size.x, size.y);
@@ -16,38 +22,41 @@ GtkDisplay::GtkDisplay(Vec2i const& request_size) : size{request_size}
 	g_signal_connect(
 		canvas,
 		"draw",
-		GCallback(+[](GtkWidget*, GdkEvent*, gpointer data) { static_cast<GtkDisplay*>(data)->on_window_draw(); }),
+		GCallback(+[](GtkWidget*, GdkEvent*, gpointer data) { static_cast<GtkDisplay*>(data)->draw_window(); }),
 		this);
 	gtk_widget_set_app_paintable(canvas, TRUE);
 	gtk_widget_show_all(window);
-	gtk_main();
+	gtk_thread = std::thread([this]() {
+		while (!die)
+		{
+			while (gtk_events_pending())
+			{
+				gtk_main_iteration();
+			}
+			usleep(0.02 * 1000000);
+			executor.iteration();
+		}
+	});
 }
 
-void GtkDisplay::update(Vec2i lower_left, Vec2i size, bool* data)
+GtkDisplay::~GtkDisplay()
 {
-	log_warning("not implemented");
+	die = true;
+	gtk_thread.join();
 }
 
-void GtkDisplay::on_window_draw()
+void GtkDisplay::update(Vec2i lower_left, Vec2i update_size, bool* data)
+{
+	bool* data_copy = new bool[update_size.size()];
+	executor.run([=]() { log_warning("not implemented"); });
+}
+
+void GtkDisplay::draw_window()
 {
 	GError* err = nullptr;
 
-	guchar* pix_data = new guchar[size.area() * 3];
-
-	Vec2i i;
-	for (i.y = 0; i.y < size.y; i.y++)
-	{
-		for (i.x = 0; i.x < size.x; i.x++)
-		{
-			pix_data[(i.x + i.y * size.x) * 3 + 0] = 0;
-			pix_data[(i.x + i.y * size.x) * 3 + 1] = 128;
-			pix_data[(i.x + i.y * size.x) * 3 + 2] =
-				std::min((i - (size / 2.0)).length() * 255 * 2 / size.length(), 255);
-		}
-	}
-
 	// Create pixbuf
-	GdkPixbuf* pix = gdk_pixbuf_new_from_data(pix_data,
+	GdkPixbuf* pix = gdk_pixbuf_new_from_data((const guchar*)pixels,
 											  GDK_COLORSPACE_RGB,
 											  false,
 											  8,

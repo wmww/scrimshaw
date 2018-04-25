@@ -45,7 +45,7 @@ struct Vec2
 		y /= value;
 	}
 
-	inline T area() const { return x * y; }
+	inline T size() const { return x * y; }
 	inline T length_squared() const { return x * x + y * y; }
 	inline T length() const { return sqrt(x * x + y * y); }
 

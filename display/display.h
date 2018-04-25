@@ -11,6 +11,7 @@ public:
 	virtual ~Display() = default;
 
 	virtual void update(Vec2i lower_left, Vec2i size, bool* data) = 0;
+	virtual Vec2i get_size() = 0;
 
 private:
 };
