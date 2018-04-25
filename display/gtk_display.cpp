@@ -3,6 +3,7 @@
 #include "logger.h"
 
 #include <unistd.h>
+#include <functional>
 
 GtkDisplay::GtkDisplay(Vec2i const& request_size)
 	: size{request_size},
@@ -18,37 +19,41 @@ GtkDisplay::GtkDisplay(Vec2i const& request_size)
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	// gtk_widget_set_size_request (window, size.x, size.y);
 	gtk_window_set_default_size(GTK_WINDOW(window), size.x, size.y);
+	gtk_window_set_resizable(GTK_WINDOW(window), false);
 	// Windows named 'Hedgehog' are configured to be floating in my window manager, long story.
 	gtk_window_set_title(GTK_WINDOW(window), "Hedgehog");
-	// g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), nullptr);
+	g_signal_connect(window,
+					 "delete-event",
+					 G_CALLBACK(+[](GtkWidget* widget, GdkEvent* event, GtkDisplay* self) { self->die = true; }),
+					 this);
 	canvas = gtk_drawing_area_new();
 	gtk_container_add(GTK_CONTAINER(window), canvas);
 	g_signal_connect(
-		canvas,
-		"draw",
-		GCallback(+[](GtkWidget*, GdkEvent*, gpointer data) { static_cast<GtkDisplay*>(data)->draw_window(); }),
-		this);
+		canvas, "draw", GCallback(+[](GtkWidget*, GdkEvent*, GtkDisplay* self) { self->draw_window(); }), this);
 	gtk_widget_set_app_paintable(canvas, TRUE);
 	gtk_widget_show_all(window);
 	// Create pixbuf
 	gtk_thread = std::thread([this]() {
 		while (!die)
 		{
-			while (gtk_events_pending())
-			{
-				gtk_main_iteration();
-			}
-			usleep(0.02 * 1000000);
 			executor.iteration();
+			gtk_main_iteration_do(false);
+			usleep(0.02 * 1000000);
+		}
+		gtk_widget_hide(window);
+		while (gtk_main_iteration_do(false))
+		{
 		}
 	});
 }
 
 GtkDisplay::~GtkDisplay()
 {
+	log_message("~GtkDisplay started");
 	die = true;
 	gtk_thread.join();
 	g_object_unref(pixbuf);
+	log_message("~GtkDisplay ended");
 }
 
 void GtkDisplay::draw(Vec2i lower_left, Vec2i update_size, bool* data)
@@ -78,11 +83,13 @@ void GtkDisplay::draw(Vec2i lower_left, Vec2i update_size, bool* data)
 
 void GtkDisplay::commit()
 {
-    executor.run([this](){draw_window();});
+	executor.run([this]() { draw_window(); });
 }
 
 void GtkDisplay::draw_window()
 {
+	if (die)
+		return;
 	cairo_rectangle_int_t cairo_rect = {0, 0, size.x, size.y};
 	cairo_region_t* region = cairo_region_create_rectangle(&cairo_rect);
 	GdkDrawingContext* drawing_context = gdk_window_begin_draw_frame(gtk_widget_get_window(canvas), region);

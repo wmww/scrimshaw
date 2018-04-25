@@ -11,8 +11,9 @@ public:
 	virtual ~Display() = default;
 
 	virtual void draw(Vec2i lower_left, Vec2i size, bool* data) = 0;
-    virtual void commit() = 0;
+	virtual void commit() = 0;
 	virtual Vec2i get_size() = 0;
+	virtual bool is_dead() = 0;
 
 private:
 };

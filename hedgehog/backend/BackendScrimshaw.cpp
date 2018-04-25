@@ -42,6 +42,12 @@ struct BackendScrimshaw: Backend
 	
 	void checkEvents()
 	{
+        if (display->is_dead())
+        {
+            Backend::instance = nullptr;
+            return;
+        }
+
 		if (auto input = inputInterface.lock())
 		{
 			libinput_check_events(&*input);

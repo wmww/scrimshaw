@@ -18,6 +18,5 @@ void EpdifDisplay::draw(Vec2i lower_left, Vec2i size, bool* data)
 
 void EpdifDisplay::commit()
 {
-    log_warning("not implemented");
+	log_warning("not implemented");
 }
-
