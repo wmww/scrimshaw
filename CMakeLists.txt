@@ -40,4 +40,6 @@ target_link_libraries(
     -lpthread
     wayland-server
     xkbcommon
+    udev
+    input
     )
