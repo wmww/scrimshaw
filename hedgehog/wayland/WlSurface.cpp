@@ -126,10 +126,9 @@ const struct wl_surface_interface WlSurface::Impl::surfaceInterface = {
                 wl_shm_buffer_begin_access(shmBuffer);
 				uint32_t width = wl_shm_buffer_get_width(shmBuffer);
 				uint32_t height = wl_shm_buffer_get_height(shmBuffer);
-                ASSERT(wl_shm_buffer_get_format(shmBuffer) == WL_SHM_FORMAT_BGRA8888);
 				bufferDim = V2i(width, height);
 				void * data = wl_shm_buffer_get_data(shmBuffer);
-				impl->texture.loadFromBgrData(data, bufferDim);
+				impl->texture.loadFromData(data, bufferDim, wl_shm_buffer_get_format(shmBuffer));
                 wl_shm_buffer_end_access(shmBuffer);
 			}
 			else

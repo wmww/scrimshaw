@@ -9,7 +9,7 @@ public:
 	Texture() {}
 	
 	void setupEmpty();
-	void loadFromBgrData(void * data, V2i dim);
+	void loadFromData(void * data, V2i dim, uint32_t format);
     V2i get_dim();
     bool * get_data();
 	
