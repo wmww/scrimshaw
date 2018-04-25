@@ -1,14 +1,15 @@
 #pragma once
 
 #include "hedgehog/util.h"
-#include "../scene/InputInterface.h"
-#include "Texture.h"
+#include "hedgehog/scene/InputInterface.h"
+
+#include "display/pixel_buffer.h"
 
 class Backend
 {
 public:
     virtual Vec2i getDim() = 0;
-    virtual void draw(Texture texture, V2d pos) = 0;
+    virtual void draw(PixelBuffer buffer, Vec2d position) = 0;
 	virtual void swapBuffer() = 0;
 	virtual void checkEvents() = 0;
 	string getKeymap() { return keymapString; }

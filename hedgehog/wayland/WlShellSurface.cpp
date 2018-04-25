@@ -89,7 +89,6 @@ WlShellSurface::WlShellSurface(wl_client * client, uint32_t id, uint version, Wl
 	this->impl = impl;
 	impl->waylandSurface = surface;
 	impl->client = client;
-	impl->texture = surface.getTexture();
 	Scene::instance.addWindow(impl);
 	impl->resource.setup(impl, client, id, &wl_shell_surface_interface, version, &Impl::wlShellSurfaceInterface);
 }

@@ -2,6 +2,7 @@
 
 #include <memory>
 #include "vec2.h"
+#include "pixel_buffer.h"
 
 Vec2i const epdif_size{296, 128};
 
@@ -12,7 +13,7 @@ public:
 
 	virtual ~Display() = default;
 
-	virtual void draw(Vec2i lower_left, Vec2i size, bool* data) = 0;
+	virtual void draw(PixelBuffer buffer, Vec2i lower_left) = 0;
 	virtual void commit() = 0;
 	virtual Vec2i get_size() = 0;
 	virtual bool is_dead() = 0;

@@ -1,6 +1,8 @@
 #include "Scene.h"
 #include "../backend/Backend.h"
 
+#include <memory>
+
 // change to toggle debug statements on and off
 #define debug debug_off
 
@@ -75,12 +77,6 @@ struct Scene::Impl: InputInterface
 			input->keyPress(key, down);
 		}
 	}
-	
-	void draw(Texture tex, V2d pos)
-    {
-        ASSERT_ELSE(Backend::instance, return);
-        Backend::instance->draw(tex, pos);
-    }
 };
 
 void Scene::setup()
@@ -110,6 +106,7 @@ void Scene::draw()
 {
 	ASSERT_ELSE(impl, return);
 	//warning(to_string(impl->windows.size()) + " windows");
+    /*
 	for (auto window: impl->windows)
 	{
 		auto interface = window.interface.lock();
@@ -117,7 +114,7 @@ void Scene::draw()
 		{
 			impl->draw(interface->texture, window.pos);
 		}
-	}
+	}*/
 	
 	/*
 	if (impl->cursorTexture.isValid())

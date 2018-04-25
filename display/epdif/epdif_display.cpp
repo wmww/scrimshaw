@@ -4,6 +4,8 @@
 
 #include "logger.h"
 
+#include <cmath>
+
 EpdifDisplay::Pins const epdif_pins = {
 	17, // RST
 	25, // DC
@@ -17,7 +19,11 @@ std::unique_ptr<Display> Display::get()
 }
 
 EpdifDisplay::EpdifDisplay(Pins const& pins, Vec2i const& size)
-	: pins{pins}, size{size}, epd{std::make_unique<Epd>(pins.rst, pins.dc, pins.cs, pins.busy, size.x, size.y)}
+	: pins{pins},
+      size{size},
+      epd{std::make_unique<Epd>(pins.rst, pins.dc, pins.cs, pins.busy, size.x, size.y)},
+      data{std::unique_ptr<unsigned char[]>{new unsigned char[
+          static_cast<int>(std::ceil(static_cast<double>(size.size()) / sizeof(char)))]}}
 {}
 
 EpdifDisplay::~EpdifDisplay()
@@ -25,6 +31,7 @@ EpdifDisplay::~EpdifDisplay()
 
 void EpdifDisplay::draw(Vec2i lower_left, Vec2i size, bool* data)
 {
+
 	log_warning("not implemented");
 }
 

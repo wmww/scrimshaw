@@ -15,7 +15,7 @@ struct WlSurface::Impl: Resource::Data, InputInterface
 	V2d dim;
     V2d clipPos, clipDim;
 	bool isDamaged = false;
-	Texture texture;
+	PixelBuffer latestBuffer;
 	wl_resource * bufferResourceRaw;
 	Resource surfaceResource;
 	//struct wl_resource * surfaceResource = nullptr;
@@ -129,7 +129,7 @@ const struct wl_surface_interface WlSurface::Impl::surfaceInterface = {
 				uint32_t height = wl_shm_buffer_get_height(shmBuffer);
 				bufferDim = V2i(width, height);
 				void * data = wl_shm_buffer_get_data(shmBuffer);
-				impl->texture.loadFromData(data, bufferDim, wl_shm_buffer_get_format(shmBuffer), impl->clipPos, impl->clipDim, Backend::instance->getDim());
+				impl->latestBuffer.copy_from_wl_shm_data(data, bufferDim, wl_shm_buffer_get_format(shmBuffer), impl->clipPos, impl->clipDim, Backend::instance->getDim());
                 wl_shm_buffer_end_access(shmBuffer);
 			}
 			else
@@ -186,12 +186,12 @@ void WlSurface::runFrameCallbacks()
 	Impl::frameCallbacks.clear();
 }
 
-Texture WlSurface::getTexture()
+PixelBuffer WlSurface::moveBuffer()
 {
-	IMPL_ELSE(return Texture());
-	if (impl->texture.isNull())
-		impl->texture.setupEmpty();
-	return impl->texture;
+	IMPL_ELSE(return PixelBuffer());
+    PixelBuffer ret = move(impl->latestBuffer);
+    impl->latestBuffer.clear();
+	return move(ret);
 }
 
 weak_ptr<InputInterface> WlSurface::getInputInterface()

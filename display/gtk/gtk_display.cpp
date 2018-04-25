@@ -12,7 +12,7 @@ std::unique_ptr<Display> Display::get()
 
 GtkDisplay::GtkDisplay(Vec2i const& request_size)
 	: size{request_size},
-	  pixels{new Color[request_size.size()]},
+	  pixels{new PixelBuffer::ColorRGB[request_size.size()]},
 	  pixbuf{gdk_pixbuf_new_from_data((const guchar*)pixels, GDK_COLORSPACE_RGB, false, 8, size.x, size.y, size.x * 3,
 									  +[](guchar* pixels, gpointer data) { delete[] pixels; }, nullptr)}
 {
@@ -63,28 +63,10 @@ GtkDisplay::~GtkDisplay()
 	g_object_unref(pixbuf);
 }
 
-void GtkDisplay::draw(Vec2i lower_left, Vec2i update_size, bool* data)
+void GtkDisplay::draw(PixelBuffer buffer, Vec2i lower_left)
 {
-	// don't worry about the extra copy, the GTK backend is for testing and doesn't need to be optimized
-	bool* data_copy = new bool[update_size.size()];
-	memcpy(data_copy, data, sizeof(bool) * update_size.size());
-
-	executor.run([lower_left, update_size, data_copy, this]() {
-		Vec2i i;
-		for (i.y = 0; i.y < update_size.y; i.y++)
-		{
-			for (i.x = 0; i.x < update_size.x; i.x++)
-			{
-				Vec2i location = i + lower_left;
-				if (location.x >= 0 && location.y >= 0 && location.x < size.x && location.y < size.y)
-				{
-					pixels[location.x + size.x * location.y] =
-						data_copy[i.x + update_size.x * i.y] ? on_color : off_color;
-				}
-			}
-		}
-
-		delete[] data_copy;
+	executor.run([lower_left, buffer = std::make_shared<PixelBuffer>(std::move(buffer)), this]() {
+		buffer->copy_into_rgb_buffer(pixels, size, lower_left, on_color, off_color);
 	});
 }
 

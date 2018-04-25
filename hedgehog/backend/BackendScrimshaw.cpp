@@ -1,5 +1,7 @@
 #include "Backend.h"
-#include "../../display/display.h"
+#include "display/display.h"
+
+#include <utility>
 
 // change to toggle debug statements on and off
 #define debug debug_off
@@ -27,12 +29,9 @@ struct BackendScrimshaw: Backend
         return display->get_size();
     }
     
-    void draw(Texture texture, V2d pos)
+    void draw(PixelBuffer buffer, Vec2d position)
     {
-        display->draw(
-            Vec2i(pos.x, pos.y),
-            Vec2i(texture.get_dim().x, texture.get_dim().y),
-            texture.get_data());
+        display->draw(std::move(buffer), position);
     }
     
 	void swapBuffer()

@@ -2,9 +2,9 @@
 
 #include "hedgehog/util.h"
 #include "WaylandServer.h"
-#include "../backend/Texture.h"
-#include "../scene/InputInterface.h"
+#include "hedgehog/scene/InputInterface.h"
 #include "Resource.h"
+#include "display/pixel_buffer.h"
 
 class WlSurface
 {
@@ -16,7 +16,7 @@ public:
 	static void runFrameCallbacks();
 	
 	weak_ptr<InputInterface> getInputInterface();
-	Texture getTexture();
+    PixelBuffer moveBuffer();
     
     void set_clip(Vec2d low, Vec2d high);
 	

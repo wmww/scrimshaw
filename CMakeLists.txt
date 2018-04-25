@@ -3,6 +3,10 @@ cmake_minimum_required(VERSION 3.1)
 
 project(Scrimshaw)
 
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 file(GLOB scrimshaw_sources
      util/*.cpp
      display/*.cpp)

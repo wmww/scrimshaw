@@ -1,6 +1,10 @@
 #pragma once
 
 #include "display/display.h"
+#include "executor.h"
+
+#include <thread>
+#include <atomic>
 
 class Epd;
 
@@ -24,4 +28,9 @@ private:
 	Pins const pins;
 	Vec2i const size;
 	std::unique_ptr<Epd> const epd;
+    std::unique_ptr<unsigned char[]> const data;
+
+    std::atomic<bool> die{false};
+	std::thread gtk_thread;
+	Executor executor;
 };

@@ -210,7 +210,6 @@ XdgShellV6Surface::XdgShellV6Surface(wl_client * client, uint32_t id, uint versi
 	auto impl = make_shared<Impl>();
 	this->impl = impl;
 	impl->waylandSurface = surface;
-	impl->texture = surface.getTexture();
 	Scene::instance.addWindow(impl);
 	// sending 1 as the version number isn't a mistake. Idk why its called v6 but you send in 1, maybe always 1 until stable?
 	impl->xdgSurfaceResource.setup(impl, client, id, &zxdg_surface_v6_interface, version, &Impl::xdgSurfaceV6Interface);
