@@ -1,5 +1,4 @@
 #include "../main/util.h"
-#include "../opengl/Texture.h"
 #include "WaylandServer.h"
 #include "WlSurface.h"
 #include "WlSeat.h"
@@ -7,7 +6,6 @@
 #include "WlRegion.h"
 #include "WlShellSurface.h"
 #include "XdgShellV6Surface.h"
-#include "WaylandEGL.h"
 
 #include <wayland-server.h>
 #include <wayland-server-protocol.h>
@@ -152,7 +150,7 @@ void setup()
 	// automatically find a free socket and connect it to the display
 	// wl_display_add_socket_auto(display);
 	
-	wl_display_add_socket(display, "wayland-1");
+	wl_display_add_socket(display, "wayland-0");
 	
 	// create global objects
 	wl_global_create(display, &wl_compositor_interface, wl_compositor_MAX_VERSION, nullptr, compositorBind);
@@ -166,8 +164,6 @@ void setup()
 	
 	eventLoop = wl_display_get_event_loop(display);
 	eventLoopFileDescriptor = wl_event_loop_get_fd(eventLoop);
-	
-	WaylandEGL::setup(display);
 	
 	debug("Wayland server setup done");
 }

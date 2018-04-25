@@ -2,7 +2,7 @@
 
 #include "../main/util.h"
 #include "WaylandServer.h"
-#include "../opengl/Texture.h"
+#include "../backend/Texture.h"
 #include "../scene/InputInterface.h"
 #include "Resource.h"
 

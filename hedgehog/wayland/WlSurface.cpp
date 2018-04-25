@@ -3,7 +3,6 @@
 #include "Resource.h"
 #include "../backend/Backend.h"
 #include "WlSeat.h"
-#include "WaylandEGL.h"
 
 #include <wayland-server-protocol.h>
 
@@ -124,15 +123,18 @@ const struct wl_surface_interface WlSurface::Impl::surfaceInterface = {
 			struct wl_shm_buffer * shmBuffer = wl_shm_buffer_get(buffer);
 			if (shmBuffer)
 			{
+                wl_shm_buffer_begin_access(shmBuffer);
 				uint32_t width = wl_shm_buffer_get_width(shmBuffer);
 				uint32_t height = wl_shm_buffer_get_height(shmBuffer);
+                ASSERT(wl_shm_buffer_get_format(shmBuffer) == WL_SHM_FORMAT_BGRA8888);
 				bufferDim = V2i(width, height);
 				void * data = wl_shm_buffer_get_data(shmBuffer);
 				impl->texture.loadFromData(data, bufferDim);
+                wl_shm_buffer_end_access(shmBuffer);
 			}
 			else
 			{
-				WaylandEGL::loadIntoTexture(buffer, impl->texture);
+				warning("buffer not a SHM buffer");
 			}
 			wl_buffer_send_release(buffer);
 			impl->bufferResourceRaw = nullptr;

@@ -1,5 +1,4 @@
 #include "Scene.h"
-#include "../opengl/RectRenderer.h"
 
 // change to toggle debug statements on and off
 #define debug debug_off
@@ -16,9 +15,6 @@ struct Scene::Impl: InputInterface
 	};
 	
 	vector<Window> windows;
-	Texture cursorTexture;
-	V2d cursorHotspot;
-	RectRenderer renderer;
 	V2d lastMousePos;
 	
 	Window getActiveWindow()
@@ -54,8 +50,6 @@ struct Scene::Impl: InputInterface
 			auto input = interface->getInputInterface().lock();
 			ASSERT_ELSE(input, return);
 			input->pointerLeave();
-			cursorTexture = Texture();
-			cursorHotspot = V2d();
 		}
 	}
 	
@@ -80,6 +74,11 @@ struct Scene::Impl: InputInterface
 			input->keyPress(key, down);
 		}
 	}
+	
+	void draw(Texture tex, V2d pos, V2d size)
+    {
+        warning(FUNC + " not implemented");
+    }
 };
 
 void Scene::setup()
@@ -99,14 +98,6 @@ void Scene::addWindow(weak_ptr<WindowInterface> window)
 	impl->windows.push_back(data);
 }
 
-void Scene::setCursor(Texture texture, V2d hotspot)
-{
-	debug("setting cursor");
-	ASSERT_ELSE(impl, return);
-	impl->cursorTexture = texture;
-	impl->cursorHotspot = hotspot;
-}
-
 weak_ptr<InputInterface> Scene::getInputInterface()
 {
 	ASSERT_ELSE(impl, return weak_ptr<InputInterface>());
@@ -122,12 +113,14 @@ void Scene::draw()
 		auto interface = window.interface.lock();
 		if (interface && interface->texture.isValid())
 		{
-			impl->renderer.draw(interface->texture, window.pos, window.size);
-			//mpl->renderer.draw(window->texture, V2d(0, 0), V2d(1, 1));
+			impl->draw(interface->texture, window.pos, window.size);
 		}
 	}
+	
+	/*
 	if (impl->cursorTexture.isValid())
 	{
 		impl->renderer.draw(impl->cursorTexture, impl->lastMousePos, V2d(0.2, 0.2));
 	}
+	*/
 }

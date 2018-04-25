@@ -39,19 +39,7 @@ std::unordered_map<wl_client *, weak_ptr<WlSeat::Impl>> WlSeat::Impl::clientToIm
 const struct wl_pointer_interface WlSeat::Impl::pointerInterface = {
 	
 	.set_cursor = +[](wl_client * client, wl_resource * resource, uint32_t serial, wl_resource * _surface, int32_t hotspot_x, int32_t hotspot_y) {
-		debug("wl_pointer.set_cursor called");
-		IMPL_FROM(resource);
-		if (_surface == nullptr)
-		{
-			Scene::instance.setCursor(Texture(), V2d(0, 0));
-		}
-		else
-		{
-			WlSurface surface = WlSurface::getFrom(Resource(_surface));
-			Texture texture = surface.getTexture();
-			ASSERT_ELSE(texture.isValid(), return);
-			Scene::instance.setCursor(texture, V2d(0, 0));
-		}
+		debug("wl_pointer.set_cursor ignored");
 	},
 	
 	.release = +[](wl_client * client, wl_resource *resource) {

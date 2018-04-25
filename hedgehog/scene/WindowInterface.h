@@ -2,6 +2,7 @@
 
 #include "../main/util.h"
 #include "InputInterface.h"
+#include "../backend/Texture.h"
 
 class WindowInterface
 {

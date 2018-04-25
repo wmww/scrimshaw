@@ -1,3 +1,4 @@
+/*
 #include "display.h"
 
 #include "../util/logger.h"
@@ -34,3 +35,4 @@ int main()
 
 	return 0;
 }
+*/

@@ -23,7 +23,7 @@ int main (int argc, char ** argv)
 	debug("setting up backend");
 	//auto backend = Backend::makeGLX(V2i(800, 800));
 	Backend::setup(backendType);
-	ASSERT_ELSE(Backend::instance, exit(1));
+	ASSERT_FATAL(Backend::instance);
 	
 	debug("setting up wayland server");
 	
@@ -42,7 +42,7 @@ int main (int argc, char ** argv)
 		WaylandServer::iteration();
 		scene.draw();
 		Backend::instance->swapBuffer();
-		//sleepForSeconds(0.01667);
+		sleepForSeconds(0.01667);
 		Backend::instance->checkEvents();
 		//ticks++;
 		//double endTime = timeSinceStart();
