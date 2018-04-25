@@ -9,7 +9,9 @@ public:
 	Texture() {}
 	
 	void setupEmpty();
-	void loadFromData(void * data, V2i dim);
+	void loadFromBgrData(void * data, V2i dim);
+    V2i get_dim();
+    bool * get_data();
 	
 	inline bool isNull() { return impl == nullptr; };
 	inline bool isValid() { return !isNull(); };

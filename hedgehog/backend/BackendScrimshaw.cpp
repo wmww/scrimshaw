@@ -13,14 +13,22 @@ struct BackendScrimshaw: Backend
 	
 	~BackendScrimshaw() = default;
 	
+    void draw(Texture texture, V2d pos)
+    {
+        display->draw(
+            Vec2i(pos.x, pos.y),
+            Vec2i(texture.get_dim().x, texture.get_dim().y),
+            texture.get_data());
+    }
+    
 	void swapBuffer()
 	{
-		warning("BackendScrimshaw::swapBuffer() not implemented");
+		display->commit();
 	}
 	
 	void checkEvents()
 	{
-		warning("BackendScrimshaw::checkEvents() not implemented");
+		debug("BackendScrimshaw::checkEvents() not implemented");
 	}
 	
 	std::unique_ptr<Display> display;

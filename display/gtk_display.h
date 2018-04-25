@@ -15,8 +15,9 @@ public:
 	GtkDisplay(Vec2i const& size);
 	~GtkDisplay();
 
-	void update(Vec2i lower_left, Vec2i size, bool* data);
-	Vec2i get_size() { return size; }
+	void draw(Vec2i lower_left, Vec2i size, bool* data) override;
+    void commit() override;
+	Vec2i get_size() override { return size; }
 
 private:
 	struct Color

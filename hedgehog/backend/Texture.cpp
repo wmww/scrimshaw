@@ -25,7 +25,7 @@ void Texture::setupEmpty()
 		impl = make_shared<Impl>();
 }
 
-void Texture::loadFromData(void * data, V2i dim)
+void Texture::loadFromBgrData(void * data, V2i dim)
 {
 	setupEmpty();
 	impl->data = new bool[dim.x * dim.y];
@@ -41,5 +41,21 @@ void Texture::loadFromData(void * data, V2i dim)
         
         impl->data[i] = (color.b + color.g + color.r) > 128 * 3;
     }
+}
+
+V2i Texture::get_dim()
+{
+    if (impl)
+        return impl->dim;
+    else
+        return V2i();
+}
+
+bool * Texture::get_data()
+{
+    if (impl)
+        return impl->data;
+    else
+        return nullptr;
 }
 

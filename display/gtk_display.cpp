@@ -51,7 +51,7 @@ GtkDisplay::~GtkDisplay()
 	g_object_unref(pixbuf);
 }
 
-void GtkDisplay::update(Vec2i lower_left, Vec2i update_size, bool* data)
+void GtkDisplay::draw(Vec2i lower_left, Vec2i update_size, bool* data)
 {
 	// don't worry about the extra copy, the GTK backend is for testing and doesn't need to be optimized
 	bool* data_copy = new bool[update_size.size()];
@@ -73,9 +73,12 @@ void GtkDisplay::update(Vec2i lower_left, Vec2i update_size, bool* data)
 		}
 
 		delete[] data_copy;
-
-		draw_window();
 	});
+}
+
+void GtkDisplay::commit()
+{
+    executor.run([this](){draw_window();});
 }
 
 void GtkDisplay::draw_window()

@@ -1,4 +1,5 @@
 #include "Scene.h"
+#include "../backend/Backend.h"
 
 // change to toggle debug statements on and off
 #define debug debug_off
@@ -75,9 +76,10 @@ struct Scene::Impl: InputInterface
 		}
 	}
 	
-	void draw(Texture tex, V2d pos, V2d size)
+	void draw(Texture tex, V2d pos)
     {
-        warning(FUNC + " not implemented");
+        ASSERT_ELSE(Backend::instance, return);
+        Backend::instance->draw(tex, pos);
     }
 };
 
@@ -113,7 +115,7 @@ void Scene::draw()
 		auto interface = window.interface.lock();
 		if (interface && interface->texture.isValid())
 		{
-			impl->draw(interface->texture, window.pos, window.size);
+			impl->draw(interface->texture, window.pos);
 		}
 	}
 	

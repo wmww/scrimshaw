@@ -11,7 +11,13 @@ EpdifDisplay::EpdifDisplay(Pins const& pins, Vec2i const& size)
 EpdifDisplay::~EpdifDisplay()
 {}
 
-void EpdifDisplay::update(Vec2i lower_left, Vec2i size, bool* data)
+void EpdifDisplay::draw(Vec2i lower_left, Vec2i size, bool* data)
 {
 	log_warning("not implemented");
 }
+
+void EpdifDisplay::commit()
+{
+    log_warning("not implemented");
+}
+

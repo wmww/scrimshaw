@@ -2,10 +2,12 @@
 
 #include "../main/util.h"
 #include "../scene/InputInterface.h"
+#include "Texture.h"
 
 class Backend
 {
 public:
+    virtual void draw(Texture texture, V2d pos) = 0;
 	virtual void swapBuffer() = 0;
 	virtual void checkEvents() = 0;
 	string getKeymap() { return keymapString; }
