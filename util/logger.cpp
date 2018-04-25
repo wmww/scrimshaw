@@ -18,7 +18,10 @@ std::mutex log_mutex;
 
 void log_internal(LogLevel level, std::string file_path, std::string func_name, int line_num, std::string message)
 {
-	(void)func_name;
+	std::string const toplevel = "/";
+	auto pos = file_path.find_last_of(toplevel);
+	if (pos != std::string::npos)
+		file_path = file_path.substr(pos + toplevel.size());
 
 	std::lock_guard<std::mutex> lock(log_mutex);
 
@@ -27,7 +30,8 @@ void log_internal(LogLevel level, std::string file_path, std::string func_name, 
 		stream = &std::cout;
 
 	if (level != LOG_MESSAGE)
-		*stream << log_level_to_string(level) << " ";
+		*stream << log_level_to_string(level) << ": ";
 
-	*stream << "[" << file_path << ":" << line_num << "]: " << message << std::endl;
+	*stream << message << " [ " << file_path << ":" << line_num << " - " << func_name << "()"
+			<< " ] " << std::endl;
 }

@@ -1,6 +1,6 @@
 #include "epdif_display.h"
 
-#include "epdif/epd1in54.h"
+#include "epd1in54.h"
 
 #include "logger.h"
 

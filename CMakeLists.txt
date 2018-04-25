@@ -31,8 +31,7 @@ file(GLOB gtk_display_sources
 file(GLOB epdif_display_sources
      display/epdif/*.cpp)
 
-set(epdif_libs
-    -lwiringPi)
+set(epdif_libs)
 
 file(GLOB display_test_sources
      main/display_test_main.cpp)
@@ -71,16 +70,20 @@ find_library(WIRING_PI_LIB wiringPi)
 
 if (WIRING_PI_LIB)
     message("Wiring Pi found")
-    add_executable(test_epdif ${epdif_display_sources} ${display_test_sources} ${scrimshaw_sources})
-    target_link_libraries(test_gtk
-                          ${epdif_libs}
-                          ${scrimshaw_libs})
-
-    add_executable(hedgehog_epdif ${epdif_display_sources} ${hedgehog_sources} ${scrimshaw_sources})
-    target_link_libraries(hedgehog_gtk
-                          ${epdif_libs}
-                          ${hedgehog_libs}
-                          ${scrimshaw_libs})
+    set(epdif_libs ${epdif_libs}
+        -lwiringPi)
 else()
     message("Wiring Pi not found")
+    add_definitions(-DMOCK_GPIO)
 endif()
+
+add_executable(test_epdif ${epdif_display_sources} ${display_test_sources} ${scrimshaw_sources})
+target_link_libraries(test_epdif
+                      ${epdif_libs}
+                      ${scrimshaw_libs})
+
+add_executable(hedgehog_epdif ${epdif_display_sources} ${hedgehog_sources} ${scrimshaw_sources})
+target_link_libraries(hedgehog_epdif
+                      ${epdif_libs}
+                      ${hedgehog_libs}
+                      ${scrimshaw_libs})
