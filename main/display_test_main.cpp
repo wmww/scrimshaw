@@ -1,7 +1,6 @@
-/*
-#include "display.h"
+#include "display/display.h"
 
-#include "../util/logger.h"
+#include "util/logger.h"
 
 #include <unistd.h>
 
@@ -29,10 +28,10 @@ int main()
 
 	log_message("rendered circle");
 
-	display->update({}, size, pixels);
+	display->draw({}, size, pixels);
+	display->commit();
 
 	usleep(4.0 * 1000000);
 
 	return 0;
 }
-*/

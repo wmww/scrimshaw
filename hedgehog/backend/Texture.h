@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../main/util.h"
+#include "hedgehog/util.h"
 
 // there is almost no cost to creating a texture, initialization is lazy and done on first load
 class Texture

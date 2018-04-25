@@ -81,7 +81,7 @@ const struct wl_surface_interface WlSurface::Impl::surfaceInterface = {
 		// this is just for optimizing the redrawing of things behind this surface, fine to ignore for now
 	},
 	.set_input_region = +[](wl_client * client, wl_resource * resource, wl_resource * region) {
-		warning("wl_surface.set_input_region not implemented");
+		debug("wl_surface.set_input_region not implemented");
 	},
 	.commit = +[](wl_client * client, wl_resource * resource) {
 		debug("wl_surface.commit called");

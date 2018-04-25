@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../main/util.h"
+#include "hedgehog/util.h"
 #include "WaylandServer.h"
 #include "../backend/Texture.h"
 #include "../scene/InputInterface.h"

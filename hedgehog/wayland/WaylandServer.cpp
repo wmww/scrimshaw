@@ -1,4 +1,4 @@
-#include "../main/util.h"
+#include "hedgehog/util.h"
 #include "WaylandServer.h"
 #include "WlSurface.h"
 #include "WlSeat.h"
@@ -16,7 +16,7 @@
 #include "../backend/Backend.h"
 
 // change to toggle debug statements on and off
-#define debug debug_on
+#define debug debug_off
 
 const uint wl_compositor_MAX_VERSION = 4;
 const uint wl_shell_MAX_VERSION = 1;

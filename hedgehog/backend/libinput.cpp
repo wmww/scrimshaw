@@ -29,7 +29,7 @@
 // I think the way you do that is keep one copy of the MIT bit and each copyright line.
 // maybe there needs to be a separate license file instead of just the section above? idk.
 
-#include "../main/util.h"
+#include "hedgehog/util.h"
 #include "../scene/InputInterface.h"
 
 #include <libinput.h>

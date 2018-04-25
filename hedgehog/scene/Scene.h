@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../main/util.h"
+#include "hedgehog/util.h"
 #include "InputInterface.h"
 #include "WindowInterface.h"
 

@@ -5,6 +5,11 @@
 #include <unistd.h>
 #include <functional>
 
+std::unique_ptr<Display> Display::get()
+{
+	return std::make_unique<GtkDisplay>(epdif_size);
+}
+
 GtkDisplay::GtkDisplay(Vec2i const& request_size)
 	: size{request_size},
 	  pixels{new Color[request_size.size()]},
@@ -37,23 +42,25 @@ GtkDisplay::GtkDisplay(Vec2i const& request_size)
 		while (!die)
 		{
 			executor.iteration();
-			gtk_main_iteration_do(false);
+			while (gtk_events_pending())
+			{
+				gtk_main_iteration();
+			}
 			usleep(0.02 * 1000000);
 		}
 		gtk_widget_hide(window);
-		while (gtk_main_iteration_do(false))
+		while (gtk_events_pending())
 		{
+			gtk_main_iteration();
 		}
 	});
 }
 
 GtkDisplay::~GtkDisplay()
 {
-	log_message("~GtkDisplay started");
 	die = true;
 	gtk_thread.join();
 	g_object_unref(pixbuf);
-	log_message("~GtkDisplay ended");
 }
 
 void GtkDisplay::draw(Vec2i lower_left, Vec2i update_size, bool* data)

@@ -3,6 +3,8 @@
 #include <memory>
 #include "vec2.h"
 
+Vec2i const epdif_size{296, 128};
+
 class Display
 {
 public:

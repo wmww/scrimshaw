@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../main/util.h"
+#include "hedgehog/util.h"
 #include <wayland-server-core.h>
 
 // these macros are convenient and allow for proper file/line num if assert fails
