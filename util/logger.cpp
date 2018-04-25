@@ -23,9 +23,11 @@ void log_internal(LogLevel level, std::string file_path, std::string func_name, 
 	std::lock_guard<std::mutex> lock(log_mutex);
 
 	auto stream = &std::cerr;
-	if (level == LOG_MESSAGE) stream = &std::cout;
+	if (level == LOG_MESSAGE)
+		stream = &std::cout;
 
-	if (level != LOG_MESSAGE) *stream << log_level_to_string(level) << " ";
+	if (level != LOG_MESSAGE)
+		*stream << log_level_to_string(level) << " ";
 
 	*stream << "[" << file_path << ":" << line_num << "]: " << message << std::endl;
 }

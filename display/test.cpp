@@ -19,7 +19,7 @@ int main()
 		{
 			bool* pix = pixels + i.x + size.x * i.y;
 
-			if ((i - (size / 2.0)).length() / size.length() < 0.3)
+			if ((i - (size / 2)).length() / (double)size.length() < 0.3)
 				*pix = true;
 			else
 				*pix = false;

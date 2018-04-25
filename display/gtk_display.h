@@ -34,6 +34,7 @@ private:
 	Color* const pixels;
 	GtkWidget* window;
 	GtkWidget* canvas;
+	GdkPixbuf* const pixbuf;
 
 	bool die{false};
 	std::thread gtk_thread;
