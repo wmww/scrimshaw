@@ -29,7 +29,7 @@ EpdifDisplay::EpdifDisplay(Pins const& pins, Vec2i const& size)
 EpdifDisplay::~EpdifDisplay()
 {}
 
-void EpdifDisplay::draw(Vec2i lower_left, Vec2i size, bool* data)
+void EpdifDisplay::draw(PixelBuffer buffer, Vec2i lower_left)
 {
 
 	log_warning("not implemented");
