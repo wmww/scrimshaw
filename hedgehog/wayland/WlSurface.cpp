@@ -15,10 +15,10 @@ struct WlSurface::Impl: Resource::Data, InputInterface
 	V2d dim;
     V2d clipPos, clipDim;
 	bool isDamaged = false;
-	PixelBuffer latestBuffer;
 	wl_resource * bufferResourceRaw;
 	Resource surfaceResource;
 	//struct wl_resource * surfaceResource = nullptr;
+    bool visible = false;
 	
 	// interface
 	static const struct wl_surface_interface surfaceInterface;
@@ -129,8 +129,18 @@ const struct wl_surface_interface WlSurface::Impl::surfaceInterface = {
 				uint32_t height = wl_shm_buffer_get_height(shmBuffer);
 				bufferDim = V2i(width, height);
 				void * data = wl_shm_buffer_get_data(shmBuffer);
-				impl->latestBuffer.copy_from_wl_shm_data(data, bufferDim, wl_shm_buffer_get_format(shmBuffer), impl->clipPos, impl->clipDim, Backend::instance->getDim());
+                PixelBuffer buffer;
+				buffer.copy_from_wl_shm_data(data,
+                                                         bufferDim,
+                                                         wl_shm_buffer_get_format(shmBuffer),
+                                                         impl->clipPos,
+                                                         impl->clipDim,
+                                                         Backend::instance->getDim());
                 wl_shm_buffer_end_access(shmBuffer);
+                if (Backend::instance)
+                {
+                    Backend::instance->draw(move(buffer), {});
+                }
 			}
 			else
 			{
@@ -186,14 +196,6 @@ void WlSurface::runFrameCallbacks()
 	Impl::frameCallbacks.clear();
 }
 
-PixelBuffer WlSurface::moveBuffer()
-{
-	IMPL_ELSE(return PixelBuffer());
-    PixelBuffer ret = move(impl->latestBuffer);
-    impl->latestBuffer.clear();
-	return move(ret);
-}
-
 weak_ptr<InputInterface> WlSurface::getInputInterface()
 {
 	return impl;
@@ -204,4 +206,10 @@ void WlSurface::set_clip(V2d pos, V2d dim)
     IMPL_ELSE(return);
     impl->clipPos = pos;
     impl->clipDim = dim;
+}
+
+void WlSurface::set_visible(bool visible_)
+{
+    IMPL_ELSE(return);
+    impl->visible = visible_;
 }

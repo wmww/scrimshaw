@@ -16,9 +16,9 @@ public:
 	static void runFrameCallbacks();
 	
 	weak_ptr<InputInterface> getInputInterface();
-    PixelBuffer moveBuffer();
     
     void set_clip(Vec2d low, Vec2d high);
+    void set_visible(bool visble);
 	
 private:
 	struct Impl;

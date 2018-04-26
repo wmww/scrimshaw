@@ -105,7 +105,9 @@ weak_ptr<InputInterface> Scene::getInputInterface()
 void Scene::draw()
 {
 	ASSERT_ELSE(impl, return);
-	//warning(to_string(impl->windows.size()) + " windows");
+    
+    warning("Scene::draw() does nothing");
+    
     /*
 	for (auto window: impl->windows)
 	{
