@@ -144,6 +144,7 @@ void Epd::SetFrameMemory(PixelBuffer buffer, Vec2i lower_left) {
     assert_else(end.x <= width && end.y <= height,
                 return);
 
+    // SetMemoryArea size is inclusive
     SetMemoryArea(lower_left.x, lower_left.y, end.x - 1, end.y - 1);
     SetMemoryPointer(lower_left.x, lower_left.y);
     SendCommand(WRITE_RAM);

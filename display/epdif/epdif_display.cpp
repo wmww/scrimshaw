@@ -31,6 +31,11 @@ EpdifDisplay::EpdifDisplay(Pins const& pins, Vec2i const& size)
 			executor.iteration();
             if (should_commit)
             {
+                set_mode(MODE_FULL_UPDATE);
+
+                assert_else(mode == MODE_FULL_UPDATE,
+                            return);
+
                 epd->DisplayFrame();
                 should_commit = false;
             }
@@ -39,6 +44,7 @@ EpdifDisplay::EpdifDisplay(Pins const& pins, Vec2i const& size)
                 usleep(0.02 * 1000000);
             }
 		}
+		set_mode(MODE_OFF);
 	});
 }
 
@@ -58,6 +64,11 @@ void EpdifDisplay::commit()
     executor.run(
         [this, buffers = std::make_shared<std::vector<std::pair<PixelBuffer, Vec2i>>>(move(pending_buffers))]()
         {
+            set_mode(MODE_FULL_UPDATE);
+
+            assert_else(mode == MODE_FULL_UPDATE,
+                        return);
+
             for (auto& i: *buffers)
             {
                 epd->SetFrameMemory(move(i.first), i.second);
@@ -68,4 +79,46 @@ void EpdifDisplay::commit()
             }
         });
     pending_buffers.clear();
+}
+
+void EpdifDisplay::set_mode(Mode new_mode)
+{
+    if (mode == new_mode)
+        return;
+
+    if (new_mode == MODE_OFF)
+    {
+        epd->Sleep();
+        mode = MODE_OFF;
+    }
+    else if (new_mode == MODE_FULL_UPDATE)
+    {
+        if (epd->Init(lut_full_update) == 0)
+        {
+            mode = MODE_FULL_UPDATE;
+        }
+        else
+        {
+            epd->Sleep();
+            mode = MODE_OFF;
+            log_warning("failed to set mode to MODE_FULL_UPDATE");
+        }
+    }
+    else if (new_mode == MODE_PARTIAL_UPDATE)
+    {
+        if (epd->Init(lut_partial_update) == 0)
+        {
+            mode = MODE_PARTIAL_UPDATE;
+        }
+        else
+        {
+            epd->Sleep();
+            mode = MODE_OFF;
+            log_warning("failed to set mode to MODE_PARTIAL_UPDATE");
+        }
+    }
+    else
+    {
+        log_warning("unknown mode");
+    }
 }

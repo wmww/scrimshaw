@@ -182,9 +182,9 @@ void PixelBuffer::send_packed_bits(void (*func)(unsigned char))
 		log_warning("empty buffer");
 		return;
 	}
-	if (size.x % 8 != size.x)
+	if (size.x % 8 != 0)
 	{
-		log_warning("width is not divisible by 8, will attempt to clip");
+		log_warning("width " + std::to_string(size.x) + " is not divisible by 8, will attempt to clip");
 	}
 	for (int y = 0; y < size.y; y++)
 	{
