@@ -26,11 +26,6 @@ const uint wl_output_MAX_VERSION = 3;
 namespace WaylandServer
 {
 
-// no clue what this means
-typedef void (*PFNGLEGLIMAGETARGETTEXTURE2DOESPROC) (GLenum target, EGLImage image);
-
-//PFNGLEGLIMAGETARGETTEXTURE2DOESPROC glEGLImageTargetTexture2DOES = nullptr;
-	
 wl_display * display = nullptr;
 	
 struct wl_event_loop *eventLoop = nullptr;

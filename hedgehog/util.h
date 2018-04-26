@@ -22,9 +22,6 @@ using std::weak_ptr;
 #include <functional>
 using std::function;
 
-#include <GL/glew.h>
-#include <GL/gl.h>
-
 #include "vec2.h"
 #include "logger.h"
 
