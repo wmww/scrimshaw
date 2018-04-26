@@ -26,6 +26,7 @@ using std::function;
 #include <GL/gl.h>
 
 #include "vec2.h"
+#include "logger.h"
 
 typedef Vec2i V2i;
 typedef Vec2d V2d;
@@ -41,18 +42,37 @@ void logMessage(string source, MessageType type, string messaage); // this funct
 // all debugs in a file can be disabled at 0 run time cost by putting #define NO_DEBUG at the top of the file (before includes)
 // fatal automatically kills the program as soon as its done logging
 // assert is used to easily check a boolean expression, and fatally error if its false
-#define FILE_INFO string(__FILE__) + ":" + (__LINE__ < 100 ? (__LINE__ < 10 ? "   " : "  ") : (__LINE__ < 1000 ? " " : "")) + std::to_string(__LINE__)
-#define debug_off(message)
-#define debug_on(message) logMessage(FILE_INFO, MESSAGE_DEBUG, message)
-#define warning(message) logMessage(FILE_INFO, MESSAGE_WARNING, message)
-#define fatal(message) logMessage(FILE_INFO, MESSAGE_FATAL_ERROR, message)
-#define assert(condition) if (!(condition)) { logMessage(FILE_INFO, MESSAGE_ASSERTION_FAILED, "assertion '" #condition "' failed"); }
+//#define FILE_INFO string(__FILE__) + ":" + (__LINE__ < 100 ? (__LINE__ < 10 ? "   " : "  ") : (__LINE__ < 1000 ? " " : "")) + std::to_string(__LINE__)
+//#define debug_off(message)
+//#define debug_on(message) logMessage(FILE_INFO, MESSAGE_DEBUG, message)
+//#define warning(message) logMessage(FILE_INFO, MESSAGE_WARNING, message)
+//#define fatal(message) logMessage(FILE_INFO, MESSAGE_FATAL_ERROR, message)
+//#define assert(condition) if (!(condition)) { logMessage(FILE_INFO, MESSAGE_ASSERTION_FAILED, "assertion '" #condition "' failed"); }
 
 //#define ASSERT_OR_BUST(condition) if (!(condition)) { logMessage(FILE_INFO, MESSAGE_ASSERTION_FAILED, "assertion '" #condition "' failed"); }
 //#define ASSERT_ELSE_RETURN(condition) if (!(condition)) { logMessage(FILE_INFO, MESSAGE_WARNING, "assertion '" #condition "' failed; returning early from " + FUNC); return; }
-#define ASSERT_ELSE(condition, action) if (!(condition)) { logMessage(FILE_INFO, MESSAGE_WARNING, "assertion '" #condition "' failed in " + FUNC); action; }
+//#define ASSERT_ELSE(condition, action) if (!(condition)) { logMessage(FILE_INFO, MESSAGE_WARNING, "assertion '" #condition "' failed in " + FUNC); action; }
+//#define ASSERT_THEN(condition) ASSERT_ELSE(condition, ) else
+//#define ASSERT_FATAL(condition) if (!(condition)) { logMessage(FILE_INFO, MESSAGE_FATAL_ERROR, "assertion '" #condition "' failed in " + FUNC); exit(1); }
+//#define ASSERT(condition) ASSERT_ELSE(condition, )
+//#define ASSERT_ELSE_IGNORE(condition) ASSERT_ELSE(condition, )
+
+// the function-like macros debug, warning and fatal each take a string and print it along with the file and line number
+// this is made possible by the __FILE__ and __LINE__ macros
+// all debugs in a file can be disabled at 0 run time cost by putting #define NO_DEBUG at the top of the file (before includes)
+// fatal automatically kills the program as soon as its done logging
+// assert is used to easily check a boolean expression, and fatally error if its false
+#define debug_off(message)
+#define debug_on(message) log_message(message)
+#define warning(message) log_warning(message)
+#define fatal(message) log_error(message); exit(1);
+#define assert(condition) if (!(condition)) { log_error("assertion '" #condition "' failed"); exit(1); }
+
+//#define ASSERT_OR_BUST(condition) if (!(condition)) { logMessage(FILE_INFO, MESSAGE_ASSERTION_FAILED, "assertion '" #condition "' failed"); }
+//#define ASSERT_ELSE_RETURN(condition) if (!(condition)) { logMessage(FILE_INFO, MESSAGE_WARNING, "assertion '" #condition "' failed; returning early from " + FUNC); return; }
+#define ASSERT_ELSE(condition, action) if (!(condition)) { log_warning("assertion '" #condition "' failed"); action; }
 #define ASSERT_THEN(condition) ASSERT_ELSE(condition, ) else
-#define ASSERT_FATAL(condition) if (!(condition)) { logMessage(FILE_INFO, MESSAGE_FATAL_ERROR, "assertion '" #condition "' failed in " + FUNC); exit(1); }
+#define ASSERT_FATAL(condition) if (!(condition)) { log_error("assertion '" #condition "' failed"); exit(1); }
 #define ASSERT(condition) ASSERT_ELSE(condition, )
 //#define ASSERT_ELSE_IGNORE(condition) ASSERT_ELSE(condition, )
 
