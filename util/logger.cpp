@@ -9,7 +9,7 @@ std::string log_level_to_string(LogLevel level)
 	{
 	case LOG_MESSAGE: return "MESSAGE";
 	case LOG_WARNING: return "WARNING";
-	case LOG_ERROR: return "LOG_ERROR";
+    case LOG_FATAL: return "LOG_FATAL";
 	default: return "UNKNOWN LOG LEVEL";
 	}
 }
@@ -34,4 +34,6 @@ void log_internal(LogLevel level, std::string file_path, std::string func_name, 
 
 	*stream << message << " [ " << file_path << ":" << line_num << " - " << func_name << "()"
 			<< " ] " << std::endl;
+    if (level == LOG_FATAL)
+        exit(1);
 }

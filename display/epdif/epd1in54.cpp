@@ -27,6 +27,8 @@
 #include <stdlib.h>
 #include "epd1in54.h"
 
+#include "util/logger.h"
+
 Epd::~Epd() {
 };
 
@@ -121,45 +123,33 @@ void Epd::SetLut(const unsigned char* lut) {
  *  @brief: put an image buffer to the frame memory.
  *          this won't update the display.
  */
-void Epd::SetFrameMemory(
-    const unsigned char* image_buffer,
-    int x,
-    int y,
-    int image_width,
-    int image_height
-) {
-    int x_end;
-    int y_end;
+void Epd::SetFrameMemory(PixelBuffer buffer, Vec2i lower_left) {
 
-    if (
-        image_buffer == NULL ||
-        x < 0 || image_width < 0 ||
-        y < 0 || image_height < 0
-    ) {
-        return;
-    }
-    /* x point must be the multiple of 8 or the last 3 bits will be ignored */
-    x &= 0xF8;
-    image_width &= 0xF8;
-    if (x + image_width >= this->width) {
-        x_end = this->width - 1;
-    } else {
-        x_end = x + image_width - 1;
-    }
-    if (y + image_height >= this->height) {
-        y_end = this->height - 1;
-    } else {
-        y_end = y + image_height - 1;
-    }
-    SetMemoryArea(x, y, x_end, y_end);
-    SetMemoryPointer(x, y);
+    assert_else(buffer.has_data(),
+                return;);
+
+    assert_else(buffer.has_data(),
+                return);
+
+    assert_else(lower_left.x >= 0 && lower_left.y >= 0,
+                return);
+
+    assert_else(lower_left.x % 8 == 0,
+        {
+            lower_left.x = (lower_left.x / 8) * 8;
+        });
+
+    Vec2i end = lower_left + buffer.get_size();
+
+    assert_else(end.x <= width && end.y <= height,
+                return);
+
+    SetMemoryArea(lower_left.x, lower_left.y, end.x - 1, end.y - 1);
+    SetMemoryPointer(lower_left.x, lower_left.y);
     SendCommand(WRITE_RAM);
     /* send the image data */
-    for (int j = 0; j < y_end - y + 1; j++) {
-        for (int i = 0; i < (x_end - x + 1) / 8; i++) {
-            SendData(image_buffer[i + j * (image_width / 8)]);
-        }
-    }
+    DigitalWrite(dc_pin, HIGH);
+    buffer.send_packed_bits(SpiTransfer);
 }
 
 /**

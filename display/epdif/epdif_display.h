@@ -25,12 +25,17 @@ public:
 	bool is_dead() override { return false; }
 
 private:
+    // default thread
+	std::thread render_thread;
+    std::vector<std::pair<PixelBuffer, Vec2i>> pending_buffers;
+
+    // render thread
+	std::unique_ptr<Epd> const epd;
+    bool should_commit{false};
+
+    // thread safe
 	Pins const pins;
 	Vec2i const size;
-	std::unique_ptr<Epd> const epd;
-    std::unique_ptr<unsigned char[]> const data;
-
     std::atomic<bool> die{false};
-	std::thread gtk_thread;
 	Executor executor;
 };

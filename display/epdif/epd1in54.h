@@ -28,6 +28,8 @@
 #define EPD1IN54_H
 
 #include "epdif.h"
+#include "util/vec2.h"
+#include "display/pixel_buffer.h"
 
 // EPD1IN54 commands
 #define DRIVER_OUTPUT_CONTROL                       0x01
@@ -67,13 +69,7 @@ public:
     void SendData(unsigned char data);
     void WaitUntilIdle(void);
     void Reset(void);
-    void SetFrameMemory(
-        const unsigned char* image_buffer,
-        int x,
-        int y,
-        int image_width,
-        int image_height
-    );
+    void SetFrameMemory(PixelBuffer buffer, Vec2i lower_left);
     void ClearFrameMemory(unsigned char color);
     void DisplayFrame(void);
     void Sleep(void);

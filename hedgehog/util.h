@@ -65,14 +65,14 @@ void logMessage(string source, MessageType type, string messaage); // this funct
 #define debug_off(message)
 #define debug_on(message) log_message(message)
 #define warning(message) log_warning(message)
-#define fatal(message) log_error(message); exit(1);
-#define assert(condition) if (!(condition)) { log_error("assertion '" #condition "' failed"); exit(1); }
+#define fatal(message) log_fatal(message);
+#define assert(condition) if (!(condition)) { log_fatal("assertion '" #condition "' failed") }
 
 //#define ASSERT_OR_BUST(condition) if (!(condition)) { logMessage(FILE_INFO, MESSAGE_ASSERTION_FAILED, "assertion '" #condition "' failed"); }
 //#define ASSERT_ELSE_RETURN(condition) if (!(condition)) { logMessage(FILE_INFO, MESSAGE_WARNING, "assertion '" #condition "' failed; returning early from " + FUNC); return; }
 #define ASSERT_ELSE(condition, action) if (!(condition)) { log_warning("assertion '" #condition "' failed"); action; }
 #define ASSERT_THEN(condition) ASSERT_ELSE(condition, ) else
-#define ASSERT_FATAL(condition) if (!(condition)) { log_error("assertion '" #condition "' failed"); exit(1); }
+#define ASSERT_FATAL(condition) if (!(condition)) { log_fatal("assertion '" #condition "' failed"); }
 #define ASSERT(condition) ASSERT_ELSE(condition, )
 //#define ASSERT_ELSE_IGNORE(condition) ASSERT_ELSE(condition, )
 
