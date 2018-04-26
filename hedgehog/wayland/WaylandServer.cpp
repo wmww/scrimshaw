@@ -10,8 +10,6 @@
 #include <wayland-server.h>
 #include <wayland-server-protocol.h>
 #include "protocols/xdg-shell-unstable-v6.h"
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
 
 #include "../backend/Backend.h"
 

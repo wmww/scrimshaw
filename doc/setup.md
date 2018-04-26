@@ -19,7 +19,8 @@ Try typing `#`, `~` and `|`. If They don't all work, switch the keyboard layout 
 
 ## Install required packages
 ```
-sudo apt install network-manager git cmake wiringpi
+#               |      utils    |  build  | epdif  |                 hedgehog
+sudo apt install network-manager git cmake wiringpi libxkbcommon-dev libinput-dev libwayland-dev
 ```
 
 ## Clone the git repo

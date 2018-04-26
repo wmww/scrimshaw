@@ -1,6 +1,6 @@
 #include "Backend.h"
 
-#include <xkbcommon/xkbcommon-x11.h>
+#include <xkbcommon/xkbcommon.h>
 
 // change to toggle debug statements on and off
 #define debug debug_off
