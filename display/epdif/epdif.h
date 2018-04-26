@@ -37,7 +37,7 @@ public:
     EpdIf(void);
     ~EpdIf(void);
 
-    static int  IfInit(void);
+    static int  IfInit(int rst_pin, int dc_pin, int busy_pin);
     static void DigitalWrite(int pin, int value);
     static int  DigitalRead(int pin);
     static void DelayMs(unsigned int delaytime);

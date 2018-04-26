@@ -43,7 +43,7 @@ Epd::Epd(unsigned int reset_pin, unsigned int dc_pin, unsigned int cs_pin, unsig
 
 int Epd::Init(const unsigned char* lut) {
     /* this calls the peripheral hardware interface, see epdif */
-    if (IfInit() != 0) {
+    if (IfInit(reset_pin, dc_pin, busy_pin) != 0) {
         return -1;
     }
     /* EPD hardware init start */

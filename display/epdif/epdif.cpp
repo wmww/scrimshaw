@@ -46,7 +46,7 @@ void EpdIf::DelayMs(unsigned int delaytime) { usleep(delaytime * 1000); }
 
 void EpdIf::SpiTransfer(unsigned char data) {}
 
-int EpdIf::IfInit(void) { return 0; }
+int EpdIf::IfInit(int reset_pin, int dc_pin, int busy_pin) { return 0; }
 
 #else
 
@@ -73,13 +73,13 @@ void EpdIf::SpiTransfer(unsigned char data) {
     wiringPiSPIDataRW(0, &data, 1);
 }
 
-int EpdIf::IfInit(void) {
+int EpdIf::IfInit(int reset_pin, int dc_pin, int busy_pin) {
     if(wiringPiSetupGpio() < 0) {    // using Broadcom GPIO pin mapping
         return -1;
     }
-    pinMode(RST_PIN, OUTPUT);
-    pinMode(DC_PIN, OUTPUT);
-    pinMode(BUSY_PIN, INPUT);
+    pinMode(reset_pin, OUTPUT);
+    pinMode(dc_pin, OUTPUT);
+    pinMode(busy_pin, INPUT);
     wiringPiSPISetup(0, 2000000);
     return 0;
 }
