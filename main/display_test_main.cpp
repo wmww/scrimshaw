@@ -11,13 +11,14 @@ int main()
 	log_message("got display");
 
 	auto size = display->get_size();
-	bool* const pixels = new bool[size.size()];
+	PixelBuffer pixels{};
+	pixels.create_empty(size);
 	Vec2i i;
 	for (i.y = 0; i.y < size.y; i.y++)
 	{
 		for (i.x = 0; i.x < size.x; i.x++)
 		{
-			bool* pix = pixels + i.x + size.x * i.y;
+			bool* pix = pixels.get_data_ptr() + i.x + size.x * i.y;
 
 			if ((i - (size / 2)).length() / (double)size.length() < 0.3)
 				*pix = true;
@@ -28,7 +29,7 @@ int main()
 
 	log_message("rendered circle");
 
-	display->draw({}, size, pixels);
+	display->draw(move(pixels), {});
 	display->commit();
 
 	usleep(4.0 * 1000000);

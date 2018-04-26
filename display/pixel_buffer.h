@@ -22,6 +22,7 @@ public:
 
 	static const char* wl_shm_format_get_name(uint32_t format);
 
+	void create_empty(Vec2i size_);
 	void copy_from_wl_shm_data(void const* input_data, Vec2i input_size, uint32_t format, Vec2d input_clip_lower_left,
 							   Vec2d input_clip_size, Vec2i final_size);
 
@@ -36,6 +37,7 @@ public:
 	}
 
 	inline bool has_data() const { return data != nullptr; }
+	inline bool* get_data_ptr() const { return data.get(); }
 	inline Vec2i get_size() const { return size; }
 
 private:

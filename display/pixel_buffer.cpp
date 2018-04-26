@@ -2,6 +2,7 @@
 #include "logger.h"
 
 #include <wayland-server-protocol.h>
+#include <string.h>
 
 const char* PixelBuffer::wl_shm_format_get_name(uint32_t format)
 {
@@ -117,6 +118,13 @@ input_clip_corner.a)
 #undef call_clamp
 }
 */
+
+void PixelBuffer::create_empty(Vec2i size_)
+{
+	data = std::unique_ptr<bool[]>(new bool[size_.size()]);
+	size = size_;
+	memset(data.get(), 0, sizeof(bool) * size.size());
+}
 
 void PixelBuffer::copy_from_wl_shm_data(void const* input_data, Vec2i input_size, uint32_t format,
 										Vec2d input_clip_lower_left, Vec2d input_clip_size, Vec2i final_size)
