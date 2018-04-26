@@ -33,7 +33,7 @@ int main(int argc, char** argv)
 	while (Backend::instance)
 	{
 		WaylandServer::iteration();
-		//scene.draw();
+		// scene.draw();
 		Backend::instance->swapBuffer();
 		sleepForSeconds(0.01667);
 		Backend::instance->checkEvents();

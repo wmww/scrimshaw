@@ -65,11 +65,59 @@ const char* PixelBuffer::wl_shm_format_get_name(uint32_t format)
 	case WL_SHM_FORMAT_YVU422: return "WL_SHM_FORMAT_YVU422";
 	case WL_SHM_FORMAT_YUV444: return "WL_SHM_FORMAT_YUV444";
 	case WL_SHM_FORMAT_YVU444: return "WL_SHM_FORMAT_YVU444";
+	default: return "WL_SHM_FORMAT_UNKNOWN";
 	}
 }
 
+/*
+void clamp_range(int& a_size, int& a_clip_corner, int& a_clip_size, int& b_size, int& b_clip_corner, int& b_clip_size)
+{
+	if (a_clip_corner < 0)
+	{
+		int b_offset = ((- a_clip_corner) * b_clip_size) / a_clip_size;
+		b_clip_corner += b_offset;
+		b_clip_size -= b_offset;
+		a_clip_size += a_clip_corner;
+		a_clip_corner = 0;
+	}
+	int a_over = a_clip_corner + a_clip_size - a_size
+	if (a_over > 0)
+	{
+		b_clip_size -= (a_over * b_clip_size) / a_clip_size;
+		a_clip_size = a_size - a_clip_corner;
+	}
+	return a_clip_size > 0 && b_clip_size > 0;
+}
+
+void copy_buffer(void const* input_data, Vec2i input_size, Vec2i input_clip_corner, Vec2i input_clip_size,
+                 void* output_data, Vec2i output_size, Vec2i output_clip_corner, Vec2i output_clip_size)
+{
+#define call_clamp(a, b, c) \
+	clamp_range(a_size.c, a_clip_corner.c, a_clip_size.c, b_size.c b_clip_corner.c, b_clip_size.a)
+	
+#define for_range(a) for (output_point.a = output_clip_corner.a; output_point.a < output_max.a; output_point.a++, input_point.a = ((output_point.a - output_clip_corner.a) * input_clip_size.a) / output_clip_size.a + input_clip_corner.a)
+	
+	if (call_clamp(input, output, x) &&
+	    call_clamp(input, output, y) &&
+		call_clamp(output, input, x) &&
+	    call_clamp(output, input, y))
+	{
+		Vec2i output_max = output_clip_corner + output_clip_size;
+		Vec2i output_point;
+		Vec2i input_point;
+		
+		for (y)
+		{
+			
+		}
+	}
+	
+#undef call_clamp
+}
+*/
+
 void PixelBuffer::copy_from_wl_shm_data(void const* input_data, Vec2i input_size, uint32_t format,
-										Vec2d input_clip_lower_left, Vec2d input_clip_size, Vec2i final_size)
+											   Vec2d input_clip_lower_left, Vec2d input_clip_size, Vec2i final_size)
 {
 	if (format != WL_SHM_FORMAT_ARGB8888)
 	{
