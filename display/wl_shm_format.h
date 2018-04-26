@@ -1,7 +1,7 @@
 #pragma once
 
 #ifndef WL_SHM_FORMAT_ENUM
-#define WL_SHM_FORMAT_ENUM
+#	define WL_SHM_FORMAT_ENUM
 /**
  * @ingroup iface_wl_shm
  * pixel formats
@@ -251,7 +251,6 @@ enum wl_shm_format {
 	WL_SHM_FORMAT_YVU444 = 0x34325659,
 };
 #endif /* WL_SHM_FORMAT_ENUM */
-
 
 const char* PixelBuffer::wl_shm_format_get_name(uint32_t format)
 {

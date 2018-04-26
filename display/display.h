@@ -4,7 +4,7 @@
 #include "vec2.h"
 #include "pixel_buffer.h"
 
-Vec2i const epdif_size{296, 128};
+Vec2i const epdif_size{128, 296};
 
 class Display
 {
