@@ -19,9 +19,15 @@ Try typing `#`, `~` and `|`. If They don't all work, switch the keyboard layout 
 
 ## Install required packages
 ```
-#               |      utils    |  build  | epdif  |                 hedgehog                   |clients
-sudo apt install network-manager git cmake wiringpi libxkbcommon-dev libinput-dev libwayland-dev weston
+#               |      utils    |  build  | epdif  |                 hedgehog                   |    clients
+sudo apt install network-manager git cmake wiringpi libxkbcommon-dev libinput-dev libwayland-dev weston tty-clock
 ```
+
+## give user access to libinput
+```
+sudo gpasswd -a $USER input
+```
+logout or reboot is required to take effect
 
 ## Clone the git repo
 ```

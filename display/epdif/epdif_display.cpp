@@ -17,7 +17,7 @@ EpdifDisplay::Pins const epdif_pins = {
 
 std::unique_ptr<Display> Display::get()
 {
-	return std::make_unique<EpdifDisplay>(epdif_pins, epdif_size, Vec2<bool>{true, false}, true);
+	return std::make_unique<EpdifDisplay>(epdif_pins, epdif_size, Vec2<bool>{false, false}, false);
 }
 
 EpdifDisplay::EpdifDisplay(Pins const& pins, Vec2i size_, Vec2<bool> flip_, bool swap_x_y_)
