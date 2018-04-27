@@ -13,10 +13,10 @@ class EpdifDisplay : public Display
 public:
 	struct Pins
 	{
-		unsigned int rst, dc, cs, busy;
+		unsigned int reset, dc, cs, busy;
 	};
 
-	EpdifDisplay(Pins const& pins, Vec2i const& size);
+	EpdifDisplay(Pins const& pins, Vec2i size_, Vec2<bool> flip_, bool swap_x_y_);
 	~EpdifDisplay();
 
 	void draw(PixelBuffer buffer, Vec2i lower_left) override;
@@ -40,8 +40,7 @@ private:
     void set_mode(Mode new_mode);
 
     // thread safe
-	Pins const pins;
-	Vec2i const size;
+    Vec2i const size;
     std::atomic<bool> die{false};
 	Executor executor;
 };

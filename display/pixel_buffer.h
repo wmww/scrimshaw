@@ -29,7 +29,7 @@ public:
 	void copy_into_rgb_buffer(ColorRGB* output_data, Vec2i output_size, Vec2i lower_left, ColorRGB on_color,
 							  ColorRGB off_color);
 	void send_packed_bits(void (*func)(unsigned char));
-	void send_packed_bits_transformed(void (*func)(unsigned char), bool flip_x, bool flip_y, bool swap_x_y);
+	void send_packed_bits_transformed(void (*func)(unsigned char), Vec2<bool> flip, bool swap_x_y);
 
 	void clear()
 	{

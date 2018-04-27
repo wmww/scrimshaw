@@ -144,7 +144,7 @@ void PixelBuffer::send_packed_bits(void (*func)(unsigned char))
 	}
 }
 
-void PixelBuffer::send_packed_bits_transformed(void (*func)(unsigned char), bool flip_x, bool flip_y, bool swap_x_y)
+void PixelBuffer::send_packed_bits_transformed(void (*func)(unsigned char), Vec2<bool> flip, bool swap_x_y)
 {
 	if (!has_data())
 	{
@@ -166,9 +166,9 @@ void PixelBuffer::send_packed_bits_transformed(void (*func)(unsigned char), bool
 			{
 				output_point.x = output_chunk_x + i;
 				Vec2i input_point = swap_x_y ? Vec2i{output_point.y, output_point.x} : output_point;
-				if (flip_x)
+				if (flip.x)
 					input_point.x = size.x - input_point.x - 1;
-				if (flip_y)
+				if (flip.y)
 					input_point.y = size.y - input_point.y - 1;
 				packed_data |= (0x80 >> i) * data.get()[input_point.x + size.x * input_point.y];
 			}

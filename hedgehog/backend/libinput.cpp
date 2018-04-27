@@ -40,7 +40,7 @@
 #include <string.h>
 
 // change to toggle debug statements on and off
-#define debug debug_off
+#define debug debug_on
 
 bool stop = false;
 
@@ -189,12 +189,14 @@ void libinput_destroy()
 
 void libinput_check_events(InputInterface * interface)
 {
+    debug("checking events");
 	ASSERT_ELSE(interface, return);
 	struct libinput_event *ev;
 	auto backend = &backend_data;
 
 	libinput_dispatch(backend->libinput_context);
 	while ((ev = libinput_get_event(backend->libinput_context))) {
+        debug("got event");
 		//print_event_header(ev);
 		
 		switch (libinput_event_get_type(ev)) {
@@ -251,7 +253,7 @@ void libinput_check_events(InputInterface * interface)
 			if (pointerPos.y > 1)
 				pointerPos.y = 1;
 			interface->pointerMotion(pointerPos);
-			debug("pointer moved to " + to_string(pointerPos));
+			debug("pointer moved to " + pointerPos.to_string());
 			//print_motion_event(ev);
 			break;
 		}

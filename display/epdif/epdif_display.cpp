@@ -17,13 +17,12 @@ EpdifDisplay::Pins const epdif_pins = {
 
 std::unique_ptr<Display> Display::get()
 {
-	return std::make_unique<EpdifDisplay>(epdif_pins, epdif_size);
+	return std::make_unique<EpdifDisplay>(epdif_pins, epdif_size, Vec2<bool>{true, false}, true);
 }
 
-EpdifDisplay::EpdifDisplay(Pins const& pins, Vec2i const& size)
-	: pins{pins},
-      size{size},
-      epd{std::make_unique<Epd>(pins.rst, pins.dc, pins.cs, pins.busy, size.y, size.x)} // flipped x and y are intentional
+EpdifDisplay::EpdifDisplay(Pins const& pins, Vec2i size_, Vec2<bool> flip_, bool swap_x_y_)
+	: size{size_},
+      epd{std::make_unique<Epd>(pins, size_mjj, flip_, swap_x_y_)}
 {
     render_thread = std::thread([this]() {
 		while (!die)

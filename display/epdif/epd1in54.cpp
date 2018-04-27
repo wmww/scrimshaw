@@ -32,26 +32,25 @@
 Epd::~Epd() {
 };
 
-Epd::Epd(unsigned int reset_pin, unsigned int dc_pin, unsigned int cs_pin, unsigned int busy_pin, int width, int height) {
-    this->reset_pin = reset_pin;
-    this->dc_pin = dc_pin;
-    this->cs_pin = cs_pin;
-    this->busy_pin = busy_pin;
-    this->width = width;
-    this->height = height;
-};
+Epd::Epd(EpdifDisplay::Pins const& pins_, Vec2i size_, Vec2<bool> flip_, bool swap_x_y_)
+    : pins{pins},
+      internal_size{size_},
+      external_size{swap_x_y_ ? Vec2i{size_.y, size_.x} : size_},
+      flip{flip_},
+      swap_x_y{swap_x_y_}
+{};
 
 int Epd::Init(const unsigned char* lut) {
     /* this calls the peripheral hardware interface, see epdif */
-    if (IfInit(reset_pin, dc_pin, busy_pin) != 0) {
+    if (IfInit(pins.reset, pins.dc, pins.busy) != 0) {
         return -1;
     }
     /* EPD hardware init start */
     this->lut = lut;
     Reset();
     SendCommand(DRIVER_OUTPUT_CONTROL);
-    SendData((height - 1) & 0xFF);
-    SendData(((height - 1) >> 8) & 0xFF);
+    SendData((internal_size.y - 1) & 0xFF);
+    SendData(((internal_size.y - 1) >> 8) & 0xFF);
     SendData(0x00);                     // GD = 0; SM = 0; TB = 0;
     SendCommand(BOOSTER_SOFT_START_CONTROL);
     SendData(0xD7);
@@ -74,7 +73,7 @@ int Epd::Init(const unsigned char* lut) {
  *  @brief: basic function for sending commands
  */
 void Epd::SendCommand(unsigned char command) {
-    DigitalWrite(dc_pin, LOW);
+    DigitalWrite(pins.dc, LOW);
     SpiTransfer(command);
 }
 
@@ -82,15 +81,15 @@ void Epd::SendCommand(unsigned char command) {
  *  @brief: basic function for sending data
  */
 void Epd::SendData(unsigned char data) {
-    DigitalWrite(dc_pin, HIGH);
+    DigitalWrite(pins.dc, HIGH);
     SpiTransfer(data);
 }
 
 /**
- *  @brief: Wait until the busy_pin goes LOW
+ *  @brief: Wait until the pins.busy goes LOW
  */
 void Epd::WaitUntilIdle(void) {
-    while(DigitalRead(busy_pin) == HIGH) {      //LOW: idle, HIGH: busy
+    while(DigitalRead(pins.busy) == HIGH) {      //LOW: idle, HIGH: busy
         DelayMs(100);
     }      
 }
@@ -101,9 +100,9 @@ void Epd::WaitUntilIdle(void) {
  *          see Epd::Sleep();
  */
 void Epd::Reset(void) {
-    DigitalWrite(reset_pin, LOW);                //module reset    
+    DigitalWrite(pins.reset, LOW);                //module reset
     DelayMs(200);
-    DigitalWrite(reset_pin, HIGH);
+    DigitalWrite(pins.reset, HIGH);
     DelayMs(200);    
 }
 
@@ -125,6 +124,13 @@ void Epd::SetLut(const unsigned char* lut) {
  */
 void Epd::SetFrameMemory(PixelBuffer buffer, Vec2i lower_left) {
 
+    if (swap_x_y)
+        lower_left = Vec2i{lower_left.y, lower_left.x};
+    if (flip.x)
+        lower_left.x = internal_size.x - lower_left.x - 1;
+    if (flip.y)
+        lower_left.y = internal_size.y - lower_left.y - 1;
+
     assert_else(buffer.has_data(),
                 return;);
 
@@ -141,7 +147,7 @@ void Epd::SetFrameMemory(PixelBuffer buffer, Vec2i lower_left) {
 
     Vec2i end = lower_left + buffer.get_size();
 
-    assert_else(end.x <= width && end.y <= height,
+    assert_else(end.x <= internal_size.x && end.y <= internal_size.y,
                 return);
 
     // SetMemoryArea size is inclusive
@@ -149,8 +155,8 @@ void Epd::SetFrameMemory(PixelBuffer buffer, Vec2i lower_left) {
     SetMemoryPointer(lower_left.x, lower_left.y);
     SendCommand(WRITE_RAM);
     /* send the image data */
-    DigitalWrite(dc_pin, HIGH);
-    buffer.send_packed_bits_transformed(SpiTransfer, true, false, true);
+    DigitalWrite(pins.dc, HIGH);
+    buffer.send_packed_bits_transformed(SpiTransfer, flip, swap_x_y);
 }
 
 /**
@@ -158,11 +164,11 @@ void Epd::SetFrameMemory(PixelBuffer buffer, Vec2i lower_left) {
  *          this won't update the display.
  */
 void Epd::ClearFrameMemory(unsigned char color) {
-    SetMemoryArea(0, 0, this->width - 1, this->height - 1);
+    SetMemoryArea(0, 0, this->internal_size.x - 1, this->internal_size.y - 1);
     SetMemoryPointer(0, 0);
     SendCommand(WRITE_RAM);
     /* send the color data */
-    for (int i = 0; i < this->width / 8 * this->height; i++) {
+    for (int i = 0; i < this->internal_size.x / 8 * this->internal_size.y; i++) {
         SendData(color);
     }
 }

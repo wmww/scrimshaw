@@ -30,6 +30,7 @@
 #include "epdif.h"
 #include "util/vec2.h"
 #include "display/pixel_buffer.h"
+#include "display/epdif/epdif_display.h"
 
 // EPD1IN54 commands
 #define DRIVER_OUTPUT_CONTROL                       0x01
@@ -59,10 +60,12 @@ extern const unsigned char lut_partial_update[];
 
 class Epd : public EpdIf {
 public:
-    int width;
-    int height;
+    Vec2i const external_size;
+    Vec2i const internal_size;
+    Vec2<bool> const flip;
+    bool const swap_x_y;
 
-    Epd(unsigned int reset_pin, unsigned int dc_pin, unsigned int cs_pin, unsigned int busy_pin, int width, int height);
+    Epd(EpdifDisplay::Pins const& pins, Vec2i size_, Vec2<bool> flip_, bool swap_x_y_);
     ~Epd();
     int  Init(const unsigned char* lut);
     void SendCommand(unsigned char command);
@@ -75,10 +78,7 @@ public:
     void Sleep(void);
 
 private:
-    unsigned int reset_pin;
-    unsigned int dc_pin;
-    unsigned int cs_pin;
-    unsigned int busy_pin;
+    EpdifDisplay::Pins const pins;
     const unsigned char* lut;
 
     void SetLut(const unsigned char* lut);
