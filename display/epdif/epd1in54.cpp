@@ -34,8 +34,8 @@ Epd::~Epd() {
 
 Epd::Epd(EpdifDisplay::Pins const& pins_, Vec2i size_, Vec2<bool> flip_, bool swap_x_y_)
     : pins{pins},
-      internal_size{size_},
-      external_size{swap_x_y_ ? Vec2i{size_.y, size_.x} : size_},
+      internal_size{swap_x_y_ ? Vec2i{size_.y, size_.x} : size_},
+      external_size{size_},
       flip{flip_},
       swap_x_y{swap_x_y_}
 {};
@@ -130,12 +130,9 @@ void Epd::SetFrameMemory(PixelBuffer buffer, Vec2i lower_left) {
         lower_left.x = internal_size.x - lower_left.x - 1;
     if (flip.y)
         lower_left.y = internal_size.y - lower_left.y - 1;
-
+	
     assert_else(buffer.has_data(),
                 return;);
-
-    assert_else(buffer.has_data(),
-                return);
 
     assert_else(lower_left.x >= 0 && lower_left.y >= 0,
                 return);
@@ -145,7 +142,7 @@ void Epd::SetFrameMemory(PixelBuffer buffer, Vec2i lower_left) {
             lower_left.x = (lower_left.x / 8) * 8;
         });
 
-    Vec2i end = lower_left + buffer.get_size();
+    Vec2i end = lower_left + (swap_x_y ? Vec2i{buffer.get_size().y, buffer.get_size().x} : buffer.get_size());
 
     assert_else(end.x <= internal_size.x && end.y <= internal_size.y,
                 return);
