@@ -36,7 +36,7 @@ Backend::Backend()
 void Backend::setup(Type type)
 {
 	ASSERT_ELSE(instance == nullptr, return);
-	static const V2i defaultDim = V2i(800, 800);
+	// static const V2i defaultDim = V2i(800, 800);
 	switch (type)
 	{
         case SCRIMSHAW:

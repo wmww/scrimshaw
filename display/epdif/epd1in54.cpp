@@ -144,6 +144,8 @@ void Epd::SetFrameMemory(PixelBuffer buffer, Vec2i lower_left) {
 
     Vec2i end = lower_left + (swap_x_y ? Vec2i{buffer.get_size().y, buffer.get_size().x} : buffer.get_size());
 
+	assert_fatal(end.x <= internal_size.x && end.y <= internal_size.y);
+
     assert_else(end.x <= internal_size.x && end.y <= internal_size.y,
                 return);
 

@@ -22,7 +22,7 @@ std::unique_ptr<Display> Display::get()
 
 EpdifDisplay::EpdifDisplay(Pins const& pins, Vec2i size_, Vec2<bool> flip_, bool swap_x_y_)
 	: size{size_},
-      epd{std::make_unique<Epd>(pins, size, flip_, swap_x_y_)}
+      epd{std::make_unique<Epd>(pins, size_, flip_, swap_x_y_)}
 {
     render_thread = std::thread([this]() {
 		while (!die)
