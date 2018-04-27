@@ -127,7 +127,8 @@ WlSeat::WlSeat(wl_client * client, uint32_t id, uint version)
 	Impl::clientToImpl[client] = impl;
 	ASSERT(version <= wl_seat_MAX_VERSION);
 	impl->seat.setup(impl, client, id, &wl_seat_interface, version, &Impl::seatInterface);
-	wl_seat_send_capabilities(impl->seat.getRaw(), WL_SEAT_CAPABILITY_POINTER | WL_SEAT_CAPABILITY_KEYBOARD);
+	// wl_seat_send_capabilities(impl->seat.getRaw(), WL_SEAT_CAPABILITY_POINTER | WL_SEAT_CAPABILITY_KEYBOARD);
+	wl_seat_send_capabilities(impl->seat.getRaw(), WL_SEAT_CAPABILITY_KEYBOARD);
 }
 
 void WlSeat::pointerMotion(V2d position, Resource surface)
@@ -243,8 +244,6 @@ void WlSeat::keyPress(uint key, bool down, Resource surface)
 		debug("client has not created the needed objects");
 		return;
 	}
-	ASSERT_ELSE(impl->lastPointerSurfaceRaw != nullptr, return);
-	ASSERT_ELSE(impl->lastPointerSurfaceRaw == surface.getRaw(), return);
 	Resource keyboard = impl->keyboard;
 	
 	WlArray<uint> keysDownArray; // it will be empty for now
