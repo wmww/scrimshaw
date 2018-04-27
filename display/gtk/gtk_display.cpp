@@ -63,10 +63,44 @@ GtkDisplay::~GtkDisplay()
 	g_object_unref(pixbuf);
 }
 
+// I would refactor to not use globals normally, but this is just testing code
+int _draw_start_x;
+int _draw_end_x;
+int _draw_y;
+int _draw_x;
+PixelBuffer::ColorRGB* _draw_pixels;
+Vec2i _draw_pixels_size;
+PixelBuffer::ColorRGB _draw_on_color;
+PixelBuffer::ColorRGB _draw_off_color;
+
 void GtkDisplay::draw(PixelBuffer buffer, Vec2i lower_left)
 {
 	executor.run([lower_left, buffer = std::make_shared<PixelBuffer>(std::move(buffer)), this]() {
-		buffer->copy_into_rgb_buffer(pixels, size, lower_left, on_color, off_color);
+		_draw_start_x = lower_left.x;
+		_draw_end_x = lower_left.x + buffer->get_size().x;
+		_draw_x = lower_left.x;
+		_draw_y = lower_left.y;
+		_draw_pixels = pixels;
+		_draw_pixels_size = size;
+		_draw_on_color = on_color;
+		_draw_off_color = off_color;
+		buffer->send_packed_bits_transformed(
+			+[](unsigned char data) {
+				for (int i = 7; i >= 0; i--)
+				{
+					PixelBuffer::ColorRGB color = ((data >> i) & 0x01) ? _draw_on_color : _draw_off_color;
+					_draw_pixels[_draw_x + _draw_pixels_size.x * _draw_y] = color;
+					_draw_x++;
+					if (_draw_x >= _draw_end_x)
+					{
+						_draw_x = _draw_start_x;
+						_draw_y++;
+					}
+				}
+			},
+			Vec2<bool>{true, false},
+			true);
+		// buffer->copy_into_rgb_buffer(pixels, size, lower_left, on_color, off_color);
 	});
 }
 
