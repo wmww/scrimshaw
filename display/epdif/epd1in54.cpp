@@ -150,7 +150,7 @@ void Epd::SetFrameMemory(PixelBuffer buffer, Vec2i lower_left) {
     SendCommand(WRITE_RAM);
     /* send the image data */
     DigitalWrite(dc_pin, HIGH);
-    buffer.send_packed_bits(SpiTransfer);
+    buffer.send_packed_bits_transformed(SpiTransfer, true, false, true);
 }
 
 /**

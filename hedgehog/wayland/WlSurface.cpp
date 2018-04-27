@@ -131,11 +131,11 @@ const struct wl_surface_interface WlSurface::Impl::surfaceInterface = {
 				void * data = wl_shm_buffer_get_data(shmBuffer);
                 PixelBuffer buffer;
 				buffer.copy_from_wl_shm_data(data,
-                                                         bufferDim,
-                                                         wl_shm_buffer_get_format(shmBuffer),
-                                                         impl->clipPos,
-                                                         impl->clipDim,
-                                                         Backend::instance->getDim());
+                                            bufferDim,
+                                            wl_shm_buffer_get_format(shmBuffer),
+                                            impl->clipPos,
+                                            impl->clipDim,
+                                            Backend::instance->getDim());
                 wl_shm_buffer_end_access(shmBuffer);
                 if (Backend::instance)
                 {

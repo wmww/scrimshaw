@@ -62,7 +62,7 @@ void PixelBuffer::create_empty(Vec2i size_)
 }
 
 void PixelBuffer::copy_from_wl_shm_data(void const* input_data, Vec2i input_size, uint32_t format,
-										Vec2d input_clip_lower_left, Vec2d input_clip_size, Vec2i final_size)
+										Vec2i input_clip_lower_left, Vec2i input_clip_size, Vec2i final_size)
 {
 	if (format != WL_SHM_FORMAT_ARGB8888)
 	{
@@ -129,6 +129,7 @@ void PixelBuffer::send_packed_bits(void (*func)(unsigned char))
 	{
 		log_warning("width " + std::to_string(size.x) + " is not divisible by 8, will attempt to clip");
 	}
+
 	for (int y = 0; y < size.y; y++)
 	{
 		bool* row_start = data.get() + y * size.x;
@@ -138,6 +139,39 @@ void PixelBuffer::send_packed_bits(void (*func)(unsigned char))
 										(row_start[x + 2] * (0x80 >> 2)) | (row_start[x + 3] * (0x80 >> 3)) |
 										(row_start[x + 4] * (0x80 >> 4)) | (row_start[x + 5] * (0x80 >> 5)) |
 										(row_start[x + 6] * (0x80 >> 6)) | (row_start[x + 7] * (0x80 >> 7));
+			func(packed_data);
+		}
+	}
+}
+
+void PixelBuffer::send_packed_bits_transformed(void (*func)(unsigned char), bool flip_x, bool flip_y, bool swap_x_y)
+{
+	if (!has_data())
+	{
+		log_warning("empty buffer");
+		return;
+	}
+	auto output_size = swap_x_y ? Vec2i{size.y, size.x} : size;
+	if (output_size.x % 8 != 0)
+	{
+		log_warning("width " + std::to_string(size.x) + " is not divisible by 8, will attempt to clip");
+	}
+	Vec2i output_point;
+	for (output_point.y = 0; output_point.y < output_size.y; output_point.y++)
+	{
+		for (int output_chunk_x = 0; output_chunk_x + 7 < output_size.x; output_chunk_x += 8)
+		{
+			unsigned char packed_data = 0;
+			for (int i = 0; i < 8; i++)
+			{
+				output_point.x = output_chunk_x + i;
+				Vec2i input_point = swap_x_y ? Vec2i{output_point.y, output_point.x} : output_point;
+				if (flip_x)
+					input_point.x = size.x - input_point.x - 1;
+				if (flip_y)
+					input_point.y = size.y - input_point.y - 1;
+				packed_data |= (0x80 >> i) * data.get()[input_point.x + size.x * input_point.y];
+			}
 			func(packed_data);
 		}
 	}
