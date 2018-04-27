@@ -23,7 +23,7 @@ std::unique_ptr<Display> Display::get()
 EpdifDisplay::EpdifDisplay(Pins const& pins, Vec2i const& size)
 	: pins{pins},
       size{size},
-      epd{std::make_unique<Epd>(pins.rst, pins.dc, pins.cs, pins.busy, size.x, size.y)}
+      epd{std::make_unique<Epd>(pins.rst, pins.dc, pins.cs, pins.busy, size.y, size.x)} // flipped x and y are intentional
 {
     render_thread = std::thread([this]() {
 		while (!die)
