@@ -40,7 +40,7 @@
 #include <string.h>
 
 // change to toggle debug statements on and off
-#define debug debug_on
+#define debug debug_off
 
 bool stop = false;
 
@@ -230,6 +230,7 @@ void libinput_check_events(InputInterface * interface)
 				isPressed = false;
 				break;
 			}
+			warning("libinput key " + std::to_string(key) + " pressed");
 			interface->keyPress(key, isPressed);
 			//print_key_event(li, ev);
 			break;

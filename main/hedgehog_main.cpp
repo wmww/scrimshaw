@@ -40,6 +40,9 @@ int main(int argc, char** argv)
 		// ticks++;
 		// double endTime = timeSinceStart();
 		// debug("FPS: " + to_string(ticks / (endTime - startTime)));
+
+		if (timeSinceStart() > 12)
+			break;
 	}
 
 	debug("shutting down wayland server");
