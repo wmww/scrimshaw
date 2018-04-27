@@ -23,28 +23,30 @@ const uint wl_output_MAX_VERSION = 3;
 
 namespace WaylandServer
 {
+wl_display* display = nullptr;
 
-wl_display * display = nullptr;
-	
-struct wl_event_loop *eventLoop = nullptr;
+struct wl_event_loop* eventLoop = nullptr;
 int eventLoopFileDescriptor = 0;
 
 // callbacks and interfaces
 struct wl_compositor_interface compositorImpl = {
-	
-	.create_surface = +[](wl_client * client, wl_resource * resource, uint32_t id) {
-		debug("wl_compositor.create_surface called");
-		uint version = Resource(resource).getVersion();
-		WlSurface(client, id, version);
-	},
-	.create_region = +[](wl_client * client, wl_resource * resource, uint32_t id) {
-		debug("wl_compositor.create_region called");
-		uint version = Resource(resource).getVersion();
-		WlRegion(client, id, version);
-	}
-};
 
-void compositorBind(wl_client * client, void * data, uint32_t version, uint32_t id)
+	.create_surface =
+		+[](wl_client* client, wl_resource* resource, uint32_t id)
+		{
+			debug("wl_compositor.create_surface called");
+			uint version = Resource(resource).getVersion();
+			WlSurface(client, id, version);
+		},
+	.create_region =
+		+[](wl_client* client, wl_resource* resource, uint32_t id)
+		{
+			debug("wl_compositor.create_region called");
+			uint version = Resource(resource).getVersion();
+			WlRegion(client, id, version);
+		}};
+
+void compositorBind(wl_client* client, void* data, uint32_t version, uint32_t id)
 {
 	debug(FUNC + " called");
 	ASSERT(version <= wl_compositor_MAX_VERSION);
@@ -53,13 +55,14 @@ void compositorBind(wl_client * client, void * data, uint32_t version, uint32_t 
 };
 
 struct wl_shell_interface shellImpl = {
-	.get_shell_surface = +[](wl_client * client, wl_resource * resource, uint32_t id, wl_resource * surface) {
-		debug("wl_shell.get_shell_surface called");
-		WlShellSurface(client, id, wl_resource_get_version(resource), WlSurface::getFrom(Resource(resource)));
-	}
-};
+	.get_shell_surface =
+		+[](wl_client* client, wl_resource* resource, uint32_t id, wl_resource* surface)
+		{
+			debug("wl_shell.get_shell_surface called");
+			WlShellSurface(client, id, wl_resource_get_version(resource), WlSurface::getFrom(Resource(resource)));
+		}};
 
-void shellBind(wl_client * client, void * data, uint32_t version, uint32_t id)
+void shellBind(wl_client* client, void* data, uint32_t version, uint32_t id)
 {
 	debug(FUNC + " called");
 	ASSERT(version <= wl_shell_MAX_VERSION);
@@ -67,27 +70,27 @@ void shellBind(wl_client * client, void * data, uint32_t version, uint32_t id)
 	shell.setup(nullptr, client, id, &wl_shell_interface, version, &shellImpl);
 };
 
-
-struct zxdg_shell_v6_interface xdgShellV6Impl {
-	.destroy = +[](struct wl_client *client, struct wl_resource *resource) {
-		debug("zxdg_shell_v6.destroy called");
-		Resource(resource).destroy();
-	},
-	.create_positioner = +[](struct wl_client *client, struct wl_resource *resource, uint32_t id) {
-		warning("zxdg_shell_v6.create_positioner not implemented");
-	},
-	.get_xdg_surface = +[](struct wl_client *client,struct wl_resource *resource, uint32_t id, struct wl_resource *surface) {
-		debug("zxdg_shell_v6.get_xdg_surface called");
-		XdgShellV6Surface(client, id, wl_resource_get_version(resource), WlSurface::getFrom(Resource(surface)));
-	},
-	.pong = +[](struct wl_client *client, struct wl_resource *resource, uint32_t serial)
-	{
+struct zxdg_shell_v6_interface xdgShellV6Impl
+{
+	.destroy =
+		+[](struct wl_client* client, struct wl_resource* resource) {
+			debug("zxdg_shell_v6.destroy called");
+			Resource(resource).destroy();
+		},
+	.create_positioner = +[](struct wl_client* client, struct wl_resource* resource,
+							 uint32_t id) { warning("zxdg_shell_v6.create_positioner not implemented"); },
+	.get_xdg_surface =
+		+[](struct wl_client* client, struct wl_resource* resource, uint32_t id, struct wl_resource* surface) {
+			debug("zxdg_shell_v6.get_xdg_surface called");
+			XdgShellV6Surface(client, id, wl_resource_get_version(resource), WlSurface::getFrom(Resource(surface)));
+		},
+	.pong = +[](struct wl_client* client, struct wl_resource* resource, uint32_t serial) {
 		debug("zxdg_shell_v6.pong called");
 		// this is to test responsiveness, fine to ignore for now
 	}
 };
 
-void xdgShellV6Bind(wl_client * client, void * data, uint32_t version, uint32_t id)
+void xdgShellV6Bind(wl_client* client, void* data, uint32_t version, uint32_t id)
 {
 	debug(FUNC + " called");
 	ASSERT(version <= zxdg_shell_v6_MAX_VERSION);
@@ -95,34 +98,35 @@ void xdgShellV6Bind(wl_client * client, void * data, uint32_t version, uint32_t 
 	shell.setup(nullptr, client, id, &zxdg_shell_v6_interface, version, &xdgShellV6Impl);
 };
 
-void seatBind(wl_client * client, void * data, uint32_t version, uint32_t id)
+void seatBind(wl_client* client, void* data, uint32_t version, uint32_t id)
 {
 	debug(FUNC + " called");
 	WlSeat(client, id, version);
 };
 
-void dataDeviceManagerBind(wl_client * client, void * data, uint32_t version, uint32_t id)
+void dataDeviceManagerBind(wl_client* client, void* data, uint32_t version, uint32_t id)
 {
 	debug(FUNC + " called");
 	WlDataDeviceManager(client, id, version);
 }
 
-const struct wl_output_interface outputInterface {
-	.release = +[](struct wl_client *client, struct wl_resource *resource)
-	{
+const struct wl_output_interface outputInterface
+{
+	.release = +[](struct wl_client* client, struct wl_resource* resource) {
 		debug("wl_output.release called");
 		Resource(resource).destroy();
 	}
 };
 
-void outputBind(wl_client * client, void * data, uint32_t version, uint32_t id)
+void outputBind(wl_client* client, void* data, uint32_t version, uint32_t id)
 {
 	debug("outputBindCallback called");
 	ASSERT(version <= wl_output_MAX_VERSION);
 	Resource output;
 	output.setup(nullptr, client, id, &wl_output_interface, version, &outputInterface);
 	if (version >= WL_OUTPUT_GEOMETRY_SINCE_VERSION)
-		wl_output_send_geometry(output.getRaw(), 0, 0, 1600, 1024, WL_OUTPUT_SUBPIXEL_NONE, "", "", WL_OUTPUT_TRANSFORM_NORMAL);
+		wl_output_send_geometry(
+			output.getRaw(), 0, 0, 1600, 1024, WL_OUTPUT_SUBPIXEL_NONE, "", "", WL_OUTPUT_TRANSFORM_NORMAL);
 	if (version >= WL_OUTPUT_SCALE_SINCE_VERSION)
 		wl_output_send_scale(output.getRaw(), 1);
 	if (version >= WL_OUTPUT_MODE_SINCE_VERSION)
@@ -134,40 +138,42 @@ void outputBind(wl_client * client, void * data, uint32_t version, uint32_t id)
 void setup()
 {
 	debug("starting Wayland server");
-	
+
 	// get function pointer
-	//glEGLImageTargetTexture2DOES = (PFNGLEGLIMAGETARGETTEXTURE2DOESPROC)eglGetProcAddress("glEGLImageTargetTexture2DOES");
-	
+	// glEGLImageTargetTexture2DOES =
+	// (PFNGLEGLIMAGETARGETTEXTURE2DOESPROC)eglGetProcAddress("glEGLImageTargetTexture2DOES");
+
 	display = wl_display_create();
-	
+
 	// automatically find a free socket and connect it to the display
 	// wl_display_add_socket_auto(display);
-	
+
 	wl_display_add_socket(display, "wayland-0");
-	
+
 	// create global objects
 	wl_global_create(display, &wl_compositor_interface, wl_compositor_MAX_VERSION, nullptr, compositorBind);
 	wl_global_create(display, &wl_shell_interface, wl_shell_MAX_VERSION, nullptr, shellBind);
 	wl_global_create(display, &zxdg_shell_v6_interface, zxdg_shell_v6_MAX_VERSION, nullptr, xdgShellV6Bind);
 	wl_global_create(display, &wl_seat_interface, wl_seat_MAX_VERSION, nullptr, seatBind);
-	wl_global_create(display, &wl_data_device_manager_interface, wl_data_device_manager_MAX_VERSION, nullptr, dataDeviceManagerBind);
+	wl_global_create(
+		display, &wl_data_device_manager_interface, wl_data_device_manager_MAX_VERSION, nullptr, dataDeviceManagerBind);
 	wl_global_create(display, &wl_output_interface, wl_output_MAX_VERSION, nullptr, outputBind);
-	
+
 	wl_display_init_shm(display);
-	
+
 	eventLoop = wl_display_get_event_loop(display);
 	eventLoopFileDescriptor = wl_event_loop_get_fd(eventLoop);
-	
+
 	debug("Wayland server setup done");
 }
-	
+
 void shutdown()
 {
 	debug("shutting down Wayland server");
 	wl_display_destroy(display);
 	display = nullptr;
 }
-	
+
 void iteration()
 {
 	wl_event_loop_dispatch(eventLoop, 0);
@@ -183,5 +189,4 @@ uint32_t nextSerialNum()
 	return lastSerialNum;
 }
 
-}
-
+} // namespace WaylandServer

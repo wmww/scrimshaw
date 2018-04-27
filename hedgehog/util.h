@@ -8,15 +8,15 @@ using std::to_string;
 using std::vector;
 
 #include <iostream>
-//using std::cout;
-//using std::endl;
+// using std::cout;
+// using std::endl;
 
 #include <memory>
-using std::shared_ptr;
 using std::enable_shared_from_this;
 using std::make_shared;
-using std::unique_ptr;
 using std::make_unique;
+using std::shared_ptr;
+using std::unique_ptr;
 using std::weak_ptr;
 
 #include <functional>
@@ -36,40 +36,54 @@ void logMessage(string source, MessageType type, string messaage); // this funct
 
 // the function-like macros debug, warning and fatal each take a string and print it along with the file and line number
 // this is made possible by the __FILE__ and __LINE__ macros
-// all debugs in a file can be disabled at 0 run time cost by putting #define NO_DEBUG at the top of the file (before includes)
-// fatal automatically kills the program as soon as its done logging
-// assert is used to easily check a boolean expression, and fatally error if its false
-//#define FILE_INFO string(__FILE__) + ":" + (__LINE__ < 100 ? (__LINE__ < 10 ? "   " : "  ") : (__LINE__ < 1000 ? " " : "")) + std::to_string(__LINE__)
-//#define debug_off(message)
-//#define debug_on(message) logMessage(FILE_INFO, MESSAGE_DEBUG, message)
-//#define warning(message) logMessage(FILE_INFO, MESSAGE_WARNING, message)
-//#define fatal(message) logMessage(FILE_INFO, MESSAGE_FATAL_ERROR, message)
-//#define assert(condition) if (!(condition)) { logMessage(FILE_INFO, MESSAGE_ASSERTION_FAILED, "assertion '" #condition "' failed"); }
+// all debugs in a file can be disabled at 0 run time cost by putting #define NO_DEBUG at the top of the file (before
+// includes) fatal automatically kills the program as soon as its done logging assert is used to easily check a boolean
+// expression, and fatally error if its false
+//#define FILE_INFO string(__FILE__) + ":" + (__LINE__ < 100 ? (__LINE__ < 10 ? "   " : "  ") : (__LINE__ < 1000 ? " " :
+//"")) + std::to_string(__LINE__) #define debug_off(message) #define debug_on(message) logMessage(FILE_INFO,
+//MESSAGE_DEBUG, message) #define warning(message) logMessage(FILE_INFO, MESSAGE_WARNING, message) #define
+//fatal(message) logMessage(FILE_INFO, MESSAGE_FATAL_ERROR, message) #define assert(condition) if (!(condition)) {
+//logMessage(FILE_INFO, MESSAGE_ASSERTION_FAILED, "assertion '" #condition "' failed"); }
 
-//#define ASSERT_OR_BUST(condition) if (!(condition)) { logMessage(FILE_INFO, MESSAGE_ASSERTION_FAILED, "assertion '" #condition "' failed"); }
-//#define ASSERT_ELSE_RETURN(condition) if (!(condition)) { logMessage(FILE_INFO, MESSAGE_WARNING, "assertion '" #condition "' failed; returning early from " + FUNC); return; }
-//#define ASSERT_ELSE(condition, action) if (!(condition)) { logMessage(FILE_INFO, MESSAGE_WARNING, "assertion '" #condition "' failed in " + FUNC); action; }
-//#define ASSERT_THEN(condition) ASSERT_ELSE(condition, ) else
-//#define ASSERT_FATAL(condition) if (!(condition)) { logMessage(FILE_INFO, MESSAGE_FATAL_ERROR, "assertion '" #condition "' failed in " + FUNC); exit(1); }
-//#define ASSERT(condition) ASSERT_ELSE(condition, )
-//#define ASSERT_ELSE_IGNORE(condition) ASSERT_ELSE(condition, )
+//#define ASSERT_OR_BUST(condition) if (!(condition)) { logMessage(FILE_INFO, MESSAGE_ASSERTION_FAILED, "assertion '"
+//#condition "' failed"); } #define ASSERT_ELSE_RETURN(condition) if (!(condition)) { logMessage(FILE_INFO,
+//MESSAGE_WARNING, "assertion '" #condition "' failed; returning early from " + FUNC); return; } #define
+//ASSERT_ELSE(condition, action) if (!(condition)) { logMessage(FILE_INFO, MESSAGE_WARNING, "assertion '" #condition "'
+//failed in " + FUNC); action; } #define ASSERT_THEN(condition) ASSERT_ELSE(condition, ) else #define
+//ASSERT_FATAL(condition) if (!(condition)) { logMessage(FILE_INFO, MESSAGE_FATAL_ERROR, "assertion '" #condition "'
+//failed in " + FUNC); exit(1); } #define ASSERT(condition) ASSERT_ELSE(condition, ) #define
+//ASSERT_ELSE_IGNORE(condition) ASSERT_ELSE(condition, )
 
 // the function-like macros debug, warning and fatal each take a string and print it along with the file and line number
 // this is made possible by the __FILE__ and __LINE__ macros
-// all debugs in a file can be disabled at 0 run time cost by putting #define NO_DEBUG at the top of the file (before includes)
-// fatal automatically kills the program as soon as its done logging
-// assert is used to easily check a boolean expression, and fatally error if its false
+// all debugs in a file can be disabled at 0 run time cost by putting #define NO_DEBUG at the top of the file (before
+// includes) fatal automatically kills the program as soon as its done logging assert is used to easily check a boolean
+// expression, and fatally error if its false
 #define debug_off(message)
 #define debug_on(message) log_message(message)
 #define warning(message) log_warning(message)
 #define fatal(message) log_fatal(message);
-#define assert(condition) if (!(condition)) { log_fatal("assertion '" #condition "' failed") }
+#define assert(condition)                              \
+	if (!(condition))                                  \
+	{                                                  \
+		log_fatal("assertion '" #condition "' failed") \
+	}
 
-//#define ASSERT_OR_BUST(condition) if (!(condition)) { logMessage(FILE_INFO, MESSAGE_ASSERTION_FAILED, "assertion '" #condition "' failed"); }
-//#define ASSERT_ELSE_RETURN(condition) if (!(condition)) { logMessage(FILE_INFO, MESSAGE_WARNING, "assertion '" #condition "' failed; returning early from " + FUNC); return; }
-#define ASSERT_ELSE(condition, action) if (!(condition)) { log_warning("assertion '" #condition "' failed"); action; }
+//#define ASSERT_OR_BUST(condition) if (!(condition)) { logMessage(FILE_INFO, MESSAGE_ASSERTION_FAILED, "assertion '"
+//#condition "' failed"); } #define ASSERT_ELSE_RETURN(condition) if (!(condition)) { logMessage(FILE_INFO,
+//MESSAGE_WARNING, "assertion '" #condition "' failed; returning early from " + FUNC); return; }
+#define ASSERT_ELSE(condition, action)                    \
+	if (!(condition))                                     \
+	{                                                     \
+		log_warning("assertion '" #condition "' failed"); \
+		action;                                           \
+	}
 #define ASSERT_THEN(condition) ASSERT_ELSE(condition, ) else
-#define ASSERT_FATAL(condition) if (!(condition)) { log_fatal("assertion '" #condition "' failed"); }
+#define ASSERT_FATAL(condition)                         \
+	if (!(condition))                                   \
+	{                                                   \
+		log_fatal("assertion '" #condition "' failed"); \
+	}
 #define ASSERT(condition) ASSERT_ELSE(condition, )
 //#define ASSERT_ELSE_IGNORE(condition) ASSERT_ELSE(condition, )
 
@@ -85,15 +99,19 @@ int timeSinceStartMili();
 
 // returns the path to the folder containing all shaders (ends in slash)
 // this is abstracted into a function because in the future it may need to be determined dynamically
-inline string getShaderPath() {return "shaders/";}
+inline string getShaderPath()
+{
+	return "shaders/";
+}
 
 // for lazy evaluation of static class members
-// to use, put a static function in your class called firstInstanceSetup, and call setupIfFirstInstance with this in the constructor
+// to use, put a static function in your class called firstInstanceSetup, and call setupIfFirstInstance with this in the
+// constructor
 template<typename T>
-void setupIfFirstInstance(T * type)
+void setupIfFirstInstance(T* type)
 {
 	static bool hasInitialized = false;
-	
+
 	if (!hasInitialized)
 	{
 		T::firstInstanceSetup();

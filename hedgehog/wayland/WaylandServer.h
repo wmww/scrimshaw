@@ -4,7 +4,6 @@
 
 namespace WaylandServer
 {
-
 void setup();
 
 void shutdown();
@@ -13,4 +12,4 @@ void iteration();
 
 uint32_t nextSerialNum();
 
-};
+}; // namespace WaylandServer

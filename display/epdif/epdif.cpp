@@ -33,56 +33,70 @@
 
 EpdIf::EpdIf()
 {
-    log_warning("Using mock GPIO functions");
+	log_warning("Using mock GPIO functions");
 };
 
-EpdIf::~EpdIf() {};
+EpdIf::~EpdIf(){};
 
-void EpdIf::DigitalWrite(int pin, int value) {}
+void EpdIf::DigitalWrite(int pin, int value)
+{}
 
-int EpdIf::DigitalRead(int pin) { return 0; }
+int EpdIf::DigitalRead(int pin)
+{
+	return 0;
+}
 
-void EpdIf::DelayMs(unsigned int delaytime) { usleep(delaytime * 1000); }
+void EpdIf::DelayMs(unsigned int delaytime)
+{
+	usleep(delaytime * 1000);
+}
 
-void EpdIf::SpiTransfer(unsigned char data) {}
+void EpdIf::SpiTransfer(unsigned char data)
+{}
 
-int EpdIf::IfInit(int reset_pin, int dc_pin, int busy_pin) { return 0; }
+int EpdIf::IfInit(int reset_pin, int dc_pin, int busy_pin)
+{
+	return 0;
+}
 
 #else
 
-#include <wiringPi.h>
-#include <wiringPiSPI.h>
-EpdIf::EpdIf() {
-};
-EpdIf::~EpdIf() {
-};
+#	include <wiringPi.h>
+#	include <wiringPiSPI.h>
+EpdIf::EpdIf(){};
+EpdIf::~EpdIf(){};
 
-void EpdIf::DigitalWrite(int pin, int value) {
-    digitalWrite(pin, value);
+void EpdIf::DigitalWrite(int pin, int value)
+{
+	digitalWrite(pin, value);
 }
 
-int EpdIf::DigitalRead(int pin) {
-    return digitalRead(pin);
+int EpdIf::DigitalRead(int pin)
+{
+	return digitalRead(pin);
 }
 
-void EpdIf::DelayMs(unsigned int delaytime) {
-    delay(delaytime);
+void EpdIf::DelayMs(unsigned int delaytime)
+{
+	delay(delaytime);
 }
 
-void EpdIf::SpiTransfer(unsigned char data) {
-    wiringPiSPIDataRW(0, &data, 1);
+void EpdIf::SpiTransfer(unsigned char data)
+{
+	wiringPiSPIDataRW(0, &data, 1);
 }
 
-int EpdIf::IfInit(int reset_pin, int dc_pin, int busy_pin) {
-    if(wiringPiSetupGpio() < 0) {    // using Broadcom GPIO pin mapping
-        return -1;
-    }
-    pinMode(reset_pin, OUTPUT);
-    pinMode(dc_pin, OUTPUT);
-    pinMode(busy_pin, INPUT);
-    wiringPiSPISetup(0, 2000000);
-    return 0;
+int EpdIf::IfInit(int reset_pin, int dc_pin, int busy_pin)
+{
+	if (wiringPiSetupGpio() < 0)
+	{ // using Broadcom GPIO pin mapping
+		return -1;
+	}
+	pinMode(reset_pin, OUTPUT);
+	pinMode(dc_pin, OUTPUT);
+	pinMode(busy_pin, INPUT);
+	wiringPiSPISetup(0, 2000000);
+	return 0;
 }
 
 #endif
-

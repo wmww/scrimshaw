@@ -47,28 +47,29 @@ bool stop = false;
 V2d pointerPos;
 const double pointerScaleFactor = 0.001;
 
-struct {
-	//struct wlr_backend backend;
+struct
+{
+	// struct wlr_backend backend;
 
-	//struct wlr_session *session;
-	struct udev *udev;
-	struct udev_monitor *mon;
-	struct wl_event_source *udev_event;
-	
-	struct wl_display *display;
+	// struct wlr_session *session;
+	struct udev* udev;
+	struct udev_monitor* mon;
+	struct wl_event_source* udev_event;
 
-	struct libinput *libinput_context;
-	struct wl_event_source *input_event;
+	struct wl_display* display;
 
-	//struct wl_listener session_signal;
-	
+	struct libinput* libinput_context;
+	struct wl_event_source* input_event;
+
+	// struct wl_listener session_signal;
+
 	vector<int> wlr_device_vec;
-	
-	//list_t *wlr_device_lists;
+
+	// list_t *wlr_device_lists;
 } backend_data;
 
 static const struct libinput_interface libinput_impl = {
-	.open_restricted = +[](const char *path, int flags, void *_backend) -> int {
+	.open_restricted = +[](const char* path, int flags, void* _backend) -> int {
 		debug("libinput_interface.open_restricted called, opening '" + string(path) + "'");
 		int ret = open(path, flags);
 		if (ret >= 0)
@@ -76,14 +77,15 @@ static const struct libinput_interface libinput_impl = {
 		else
 			return -errno;
 	},
-	.close_restricted = +[](int fd, void *_backend) {
-		debug("libinput_interface.close_restricted called");
-		close(fd);
-	}
-};
+	.close_restricted =
+		+[](int fd, void* _backend) {
+			debug("libinput_interface.close_restricted called");
+			close(fd);
+		}};
 
-static void wlr_libinput_log(struct libinput *libinput_context,
-		enum libinput_log_priority priority, const char *fmt, va_list args) {
+static void wlr_libinput_log(struct libinput* libinput_context, enum libinput_log_priority priority, const char* fmt,
+							 va_list args)
+{
 	char c_str[255];
 	snprintf(c_str, 255, fmt, args);
 	debug(c_str);
@@ -107,28 +109,31 @@ static int wlr_libinput_readable(int fd, uint32_t mask, void *_backend) {
 }
 */
 
-bool libinput_setup() {
+bool libinput_setup()
+{
 	auto backend = &backend_data;
 	debug("Initializing libinput");
 	backend->udev = udev_new();
 	ASSERT(backend->udev);
 	backend->libinput_context = libinput_udev_create_context(&libinput_impl, backend, backend->udev);
-	if (!backend->libinput_context) {
+	if (!backend->libinput_context)
+	{
 		debug("Failed to create libinput context");
 		return false;
 	}
 
 	// TODO: Let user customize seat used
-	if (libinput_udev_assign_seat(backend->libinput_context, "seat0") != 0) {
+	if (libinput_udev_assign_seat(backend->libinput_context, "seat0") != 0)
+	{
 		debug("Failed to assign libinput seat");
 		return false;
 	}
-	
+
 	libinput_log_set_handler(backend->libinput_context, wlr_libinput_log);
 	libinput_log_set_priority(backend->libinput_context, LIBINPUT_LOG_PRIORITY_ERROR);
 
-	//int libinput_fd = libinput_get_fd(backend->libinput_context);
-	
+	// int libinput_fd = libinput_get_fd(backend->libinput_context);
+
 	/*
 	if (backend->wlr_device_vec.size() == 0) {
 		wlr_libinput_readable(libinput_fd, WL_EVENT_READABLE, backend);
@@ -140,19 +145,19 @@ bool libinput_setup() {
 	}
 	*/
 
-	//struct wl_event_loop *event_loop =
+	// struct wl_event_loop *event_loop =
 	//	wl_display_get_event_loop(backend->display);
-	//if (backend->input_event) {
+	// if (backend->input_event) {
 	//	wl_event_source_remove(backend->input_event);
 	//}
-	//backend->input_event = wl_event_loop_add_fd(event_loop, libinput_fd,
+	// backend->input_event = wl_event_loop_add_fd(event_loop, libinput_fd,
 	//		WL_EVENT_READABLE, wlr_libinput_readable, backend);
-	//if (!backend->input_event) {
+	// if (!backend->input_event) {
 	//	debug("Failed to create input event on event loop");
 	//	return false;
 	//}
 	debug("libinput sucessfully initialized");
-	
+
 	// struct pollfd fds;
 	// fds.fd = libinput_get_fd(backend->libinput_context);
 	// fds.events = POLLIN;
@@ -161,22 +166,23 @@ bool libinput_setup() {
 	// handle interrupts
 	struct sigaction act;
 	memset(&act, 0, sizeof(act));
-	act.sa_sigaction = +[](int signal, siginfo_t *siginfo, void *userdata) { stop = true; };
+	act.sa_sigaction = +[](int signal, siginfo_t* siginfo, void* userdata) { stop = true; };
 	act.sa_flags = SA_SIGINFO;
-	if (sigaction(SIGINT, &act, NULL) == -1) {
+	if (sigaction(SIGINT, &act, NULL) == -1)
+	{
 		warning("Failed to set up signal handling (" + string(strerror(errno)) + ")");
 		return false;
 	}
 
 	// Handle already-pending device added events
-	//if (handle_and_print_events(li))
+	// if (handle_and_print_events(li))
 	//	fprintf(stderr, "Expected device added events on startup but got none. "
 	//			"Maybe you don't have the right permissions?\n");
 
 	// while (!stop && poll(&fds, 1, -1) > -1)
-	
+
 	return true;
-	
+
 	// udev_unref(session->udev);
 	// libinput_unref(backend->libinput_context);
 }
@@ -187,31 +193,31 @@ void libinput_destroy()
 	// udev_unref(session->udev);
 }
 
-void libinput_check_events(InputInterface * interface)
+void libinput_check_events(InputInterface* interface)
 {
-    debug("checking events");
-	ASSERT_ELSE(interface, return);
-	struct libinput_event *ev;
+	debug("checking events");
+	ASSERT_ELSE(interface, return );
+	struct libinput_event* ev;
 	auto backend = &backend_data;
 
 	libinput_dispatch(backend->libinput_context);
-	while ((ev = libinput_get_event(backend->libinput_context))) {
-        debug("got event");
-		//print_event_header(ev);
-		
-		switch (libinput_event_get_type(ev)) {
-		case LIBINPUT_EVENT_NONE:
-			debug("LIBINPUT_EVENT_NONE");
-			abort();
+	while ((ev = libinput_get_event(backend->libinput_context)))
+	{
+		debug("got event");
+		// print_event_header(ev);
+
+		switch (libinput_event_get_type(ev))
+		{
+		case LIBINPUT_EVENT_NONE: debug("LIBINPUT_EVENT_NONE"); abort();
 		case LIBINPUT_EVENT_DEVICE_ADDED:
 			debug("LIBINPUT_EVENT_DEVICE_ADDED");
-			//print_device_notify(ev);
-			//tools_device_apply_config(libinput_event_get_device(ev), &options);
+			// print_device_notify(ev);
+			// tools_device_apply_config(libinput_event_get_device(ev), &options);
 			break;
 		case LIBINPUT_EVENT_DEVICE_REMOVED:
 			debug("LIBINPUT_EVENT_DEVICE_REMOVED");
-			//print_device_notify(ev);
-			//tools_device_apply_config(libinput_event_get_device(ev), &options);
+			// print_device_notify(ev);
+			// tools_device_apply_config(libinput_event_get_device(ev), &options);
 			break;
 		case LIBINPUT_EVENT_KEYBOARD_KEY:
 		{
@@ -223,26 +229,22 @@ void libinput_check_events(InputInterface * interface)
 			bool isPressed = false;
 			switch (state)
 			{
-			case LIBINPUT_KEY_STATE_PRESSED:
-				isPressed = true;
-				break;
-			case LIBINPUT_KEY_STATE_RELEASED:
-				isPressed = false;
-				break;
+			case LIBINPUT_KEY_STATE_PRESSED: isPressed = true; break;
+			case LIBINPUT_KEY_STATE_RELEASED: isPressed = false; break;
 			}
 			warning("libinput key " + std::to_string(key) + " pressed");
 			interface->keyPress(key, isPressed);
-			//print_key_event(li, ev);
+			// print_key_event(li, ev);
 			break;
 		}
 		case LIBINPUT_EVENT_POINTER_MOTION:
 		{
- 			// TODO: make everything about this not shitty
+			// TODO: make everything about this not shitty
 			auto event = libinput_event_get_pointer_event(ev);
 			ASSERT_ELSE(event, break);
 			V2d d;
 			d.x = libinput_event_pointer_get_dx(event) * pointerScaleFactor;
-			d.y = - libinput_event_pointer_get_dy(event) * pointerScaleFactor;
+			d.y = -libinput_event_pointer_get_dy(event) * pointerScaleFactor;
 			pointerPos.x += d.x;
 			pointerPos.y += d.y;
 			if (pointerPos.x < 0)
@@ -255,12 +257,12 @@ void libinput_check_events(InputInterface * interface)
 				pointerPos.y = 1;
 			interface->pointerMotion(pointerPos);
 			debug("pointer moved to " + pointerPos.to_string());
-			//print_motion_event(ev);
+			// print_motion_event(ev);
 			break;
 		}
 		case LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE:
 			debug("LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE");
-			//print_absmotion_event(ev);
+			// print_absmotion_event(ev);
 			break;
 		case LIBINPUT_EVENT_POINTER_BUTTON:
 		{
@@ -277,16 +279,15 @@ void libinput_check_events(InputInterface * interface)
 				if (pointerPos.x < 0.1 && pointerPos.y < 0.1)
 					stop = true;
 				break;
-			case LIBINPUT_BUTTON_STATE_RELEASED:
-				isPressed = false;
+			case LIBINPUT_BUTTON_STATE_RELEASED: isPressed = false;
 			}
 			interface->pointerClick(button, isPressed);
-			//print_pointer_button_event(ev);
+			// print_pointer_button_event(ev);
 			break;
 		}
 		case LIBINPUT_EVENT_POINTER_AXIS:
 			debug("LIBINPUT_EVENT_POINTER_AXIS");
-			//print_pointer_axis_event(ev);
+			// print_pointer_axis_event(ev);
 			break;
 		/*case LIBINPUT_EVENT_TOUCH_DOWN:
 			//print_touch_event_with_coords(ev);
@@ -345,13 +346,10 @@ void libinput_check_events(InputInterface * interface)
 		case LIBINPUT_EVENT_SWITCH_TOGGLE:
 			print_switch_event(ev);
 			break;*/
-		default:
-			debug("other libinput event");
-			break;
+		default: debug("other libinput event"); break;
 		}
 
 		libinput_event_destroy(ev);
 		libinput_dispatch(backend->libinput_context);
 	}
 }
-

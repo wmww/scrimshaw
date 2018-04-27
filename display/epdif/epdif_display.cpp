@@ -21,27 +21,25 @@ std::unique_ptr<Display> Display::get()
 }
 
 EpdifDisplay::EpdifDisplay(Pins const& pins, Vec2i size_, Vec2<bool> flip_, bool swap_x_y_)
-	: size{size_},
-      epd{std::make_unique<Epd>(pins, size_, flip_, swap_x_y_)}
+	: size{size_}, epd{std::make_unique<Epd>(pins, size_, flip_, swap_x_y_)}
 {
-    render_thread = std::thread([this]() {
+	render_thread = std::thread([this]() {
 		while (!die)
 		{
 			executor.iteration();
-            if (should_commit)
-            {
-                set_mode(MODE_FULL_UPDATE);
+			if (should_commit)
+			{
+				set_mode(MODE_FULL_UPDATE);
 
-                assert_else(mode == MODE_FULL_UPDATE,
-                            return);
+				assert_else(mode == MODE_FULL_UPDATE, return );
 
-                epd->DisplayFrame();
-                should_commit = false;
-            }
-            else
-            {
-                usleep(0.02 * 1000000);
-            }
+				epd->DisplayFrame();
+				should_commit = false;
+			}
+			else
+			{
+				usleep(0.02 * 1000000);
+			}
 		}
 		set_mode(MODE_OFF);
 	});
@@ -49,75 +47,73 @@ EpdifDisplay::EpdifDisplay(Pins const& pins, Vec2i size_, Vec2<bool> flip_, bool
 
 EpdifDisplay::~EpdifDisplay()
 {
-    die = true;
-    render_thread.join();
+	die = true;
+	render_thread.join();
 }
 
 void EpdifDisplay::draw(PixelBuffer buffer, Vec2i lower_left)
 {
-    pending_buffers.push_back(std::make_pair(move(buffer), lower_left));
+	pending_buffers.push_back(std::make_pair(move(buffer), lower_left));
 }
 
 void EpdifDisplay::commit()
 {
-    executor.run(
-        [this, buffers = std::make_shared<std::vector<std::pair<PixelBuffer, Vec2i>>>(move(pending_buffers))]()
-        {
-            set_mode(MODE_FULL_UPDATE);
+	executor.run(
+		[this, buffers = std::make_shared<std::vector<std::pair<PixelBuffer, Vec2i>>>(move(pending_buffers))]() {
+			set_mode(MODE_FULL_UPDATE);
 
-            assert_else(mode == MODE_FULL_UPDATE,
-                        return);
+			assert_else(mode == MODE_FULL_UPDATE, return );
 
-            for (auto& i: *buffers)
-            {
-                epd->SetFrameMemory(move(i.first), i.second);
-            }
-            if (!buffers->empty())
-            {
-                should_commit = true;
-            }
-        });
-    pending_buffers.clear();
+			for (auto& i : *buffers)
+			{
+				epd->SetFrameMemory(move(i.first), i.second);
+			}
+			if (!buffers->empty())
+			{
+				should_commit = true;
+			}
+		});
+	pending_buffers.clear();
 }
 
 void EpdifDisplay::set_mode(Mode new_mode)
 {
-    if (mode == new_mode)
-        return;
+	if (mode == new_mode)
+		return;
 
-    if (new_mode == MODE_OFF)
-    {
-        epd->Sleep();
-        mode = MODE_OFF;
-    }
-    else if (new_mode == MODE_FULL_UPDATE)
-    {
-        if (epd->Init(lut_full_update) == 0)
-        {
-            mode = MODE_FULL_UPDATE;
-        }
-        else
-        {
-            epd->Sleep();
-            mode = MODE_OFF;
-            log_warning("failed to set mode to MODE_FULL_UPDATE");
-        }
-    }
-    else if (new_mode == MODE_PARTIAL_UPDATE)
-    {
-        if (epd->Init(lut_partial_update) == 0)
-        {
-            mode = MODE_PARTIAL_UPDATE;
-        }
-        else
-        {
-            epd->Sleep();
-            mode = MODE_OFF;
-            log_warning("failed to set mode to MODE_PARTIAL_UPDATE");
-        }
-    }
-    else
-    {
-        log_warning("unknown mode");
-    }
+	if (new_mode == MODE_OFF)
+	{
+		epd->Sleep();
+		mode = MODE_OFF;
+	}
+	else if (new_mode == MODE_FULL_UPDATE)
+	{
+		if (epd->Init(lut_full_update) == 0)
+		{
+			mode = MODE_FULL_UPDATE;
+		}
+		else
+		{
+			epd->Sleep();
+			mode = MODE_OFF;
+			log_warning("failed to set mode to MODE_FULL_UPDATE");
+		}
+	}
+	else if (new_mode == MODE_PARTIAL_UPDATE)
+	{
+		if (epd->Init(lut_partial_update) == 0)
+		{
+			mode = MODE_PARTIAL_UPDATE;
+		}
+		else
+		{
+			epd->Sleep();
+			mode = MODE_OFF;
+			log_warning("failed to set mode to MODE_PARTIAL_UPDATE");
+		}
+	}
+	else
+	{
+		log_warning("unknown mode");
+	}
 }

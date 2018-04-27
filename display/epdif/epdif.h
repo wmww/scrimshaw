@@ -29,18 +29,19 @@
 #define EPDIF_H
 
 // Pin level definition
-#define LOW             0
-#define HIGH            1
+#define LOW 0
+#define HIGH 1
 
-class EpdIf {
+class EpdIf
+{
 public:
-    EpdIf(void);
-    ~EpdIf(void);
+	EpdIf(void);
+	~EpdIf(void);
 
-    static int  IfInit(int rst_pin, int dc_pin, int busy_pin);
-    static void DigitalWrite(int pin, int value);
-    static int  DigitalRead(int pin);
-    static void DelayMs(unsigned int delaytime);
-    static void SpiTransfer(unsigned char data);
+	static int IfInit(int rst_pin, int dc_pin, int busy_pin);
+	static void DigitalWrite(int pin, int value);
+	static int DigitalRead(int pin);
+	static void DelayMs(unsigned int delaytime);
+	static void SpiTransfer(unsigned char data);
 };
 #endif
