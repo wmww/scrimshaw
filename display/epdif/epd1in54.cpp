@@ -32,7 +32,7 @@
 Epd::~Epd(){};
 
 Epd::Epd(EpdifDisplay::Pins const& pins_, Vec2i size_, Vec2<bool> flip_, bool swap_x_y_)
-	: pins{pins},
+	: pins{pins_},
 	  internal_size{swap_x_y_ ? Vec2i{size_.y, size_.x} : size_},
 	  external_size{size_},
 	  flip{flip_},
