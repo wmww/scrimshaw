@@ -112,7 +112,7 @@ void PixelBuffer::copy_into_rgb_buffer(ColorRGB* output_data, Vec2i output_size,
 				output_point.y < output_size.y)
 			{
 				output_data[output_point.x + output_size.x * output_point.y] =
-					data[point.x + size.x * point.y] ? on_color : off_color;
+					data[point.x + size.x * point.y] ? off_color : on_color;
 			}
 		}
 	}
@@ -151,7 +151,7 @@ void PixelBuffer::send_packed_bits_transformed(void (*func)(unsigned char), Vec2
 		log_warning("empty buffer");
 		return;
 	}
-	auto output_size = swap_x_y ? Vec2i{size.y, size.x} : size;
+	auto output_size = swap_if_needed(size, swap_x_y);
 	if (output_size.x % 8 != 0)
 	{
 		log_warning("width " + std::to_string(size.x) + " is not divisible by 8, will attempt to clip");
@@ -165,12 +165,11 @@ void PixelBuffer::send_packed_bits_transformed(void (*func)(unsigned char), Vec2
 			for (int i = 0; i < 8; i++)
 			{
 				output_point.x = output_chunk_x + i;
-				Vec2i input_point = swap_x_y ? Vec2i{output_point.y, output_point.x} : output_point;
-				if (flip.x)
-					input_point.x = size.x - input_point.x - 1;
-				if (flip.y)
-					input_point.y = size.y - input_point.y - 1;
+				Vec2i input_point = transform_to_display(output_point, output_size, flip, swap_x_y);
+				// if (input_point.x >= 0 && input_point.y >= 0 && input_point.x < size.x && input_point.y < size.y)
 				packed_data |= (0x80 >> i) * data.get()[input_point.x + size.x * input_point.y];
+				// else
+				//	log_warning("input point is " + input_point.to_string() + " (size is " + size.to_string() + ")");
 			}
 			func(packed_data);
 		}

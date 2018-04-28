@@ -234,6 +234,11 @@ void libinput_check_events(InputInterface* interface)
 			}
 			warning("libinput key " + std::to_string(key) + " pressed");
 			interface->keyPress(key, isPressed);
+			if (key == 1)
+			{
+				warning("esc pressed, quiting...");
+				stop = true;
+			}
 			// print_key_event(li, ev);
 			break;
 		}

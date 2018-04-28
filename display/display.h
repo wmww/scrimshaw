@@ -4,7 +4,9 @@
 #include "vec2.h"
 #include "pixel_buffer.h"
 
-Vec2i const epdif_size{128, 296};
+Vec2i const epdif_logical_size{296, 128};
+Vec2<bool> const epdif_flip{true, false};
+bool const epdif_swap_x_y{true};
 
 class Display
 {

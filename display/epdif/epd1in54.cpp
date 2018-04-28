@@ -33,7 +33,7 @@ Epd::~Epd(){};
 
 Epd::Epd(EpdifDisplay::Pins const& pins_, Vec2i size_, Vec2<bool> flip_, bool swap_x_y_)
 	: pins{pins_},
-	  internal_size{swap_x_y_ ? Vec2i{size_.y, size_.x} : size_},
+	  internal_size{PixelBuffer::swap_if_needed(size_, swap_x_y_)},
 	  external_size{size_},
 	  flip{flip_},
 	  swap_x_y{swap_x_y_} {};
@@ -129,30 +129,33 @@ void Epd::SetLut(const unsigned char* lut)
  *  @brief: put an image buffer to the frame memory.
  *          this won't update the display.
  */
-void Epd::SetFrameMemory(PixelBuffer buffer, Vec2i lower_left)
+void Epd::SetFrameMemory(PixelBuffer buffer, Vec2i external_lower_left)
 {
-	if (swap_x_y)
-		lower_left = Vec2i{lower_left.y, lower_left.x};
-	if (flip.x)
-		lower_left.x = internal_size.x - lower_left.x - 1;
-	if (flip.y)
-		lower_left.y = internal_size.y - lower_left.y - 1;
+	Vec2i external_upper_right = external_lower_left + buffer.get_size();
+	Vec2i external_lower_left_transformed =
+		PixelBuffer::transform_to_display(external_lower_left, external_size, flip, swap_x_y);
+	Vec2i external_upper_right_transformed =
+		PixelBuffer::transform_to_display(external_upper_right - Vec2i{1, 1}, external_size, flip, swap_x_y);
+	Vec2i internal_lower_left = Vec2i{std::min(external_lower_left_transformed.x, external_upper_right_transformed.x),
+									  std::min(external_lower_left_transformed.y, external_upper_right_transformed.y)};
+	Vec2i internal_upper_right =
+		Vec2i{std::max(external_lower_left_transformed.x, external_upper_right_transformed.x),
+			  std::max(external_lower_left_transformed.y, external_upper_right_transformed.y)} +
+		Vec2i{1, 1};
 
 	assert_else(buffer.has_data(), return;);
 
-	assert_else(lower_left.x >= 0 && lower_left.y >= 0, return );
+	assert_else(internal_lower_left.x >= 0 && internal_lower_left.y >= 0,
+				log_warning("internal_lower_left: " + internal_lower_left.to_string());
+				return );
 
-	assert_else(lower_left.x % 8 == 0, { lower_left.x = (lower_left.x / 8) * 8; });
+	assert_else(internal_lower_left.x % 8 == 0, { internal_lower_left.x = (internal_lower_left.x / 8) * 8; });
 
-	Vec2i end = lower_left + (swap_x_y ? Vec2i{buffer.get_size().y, buffer.get_size().x} : buffer.get_size());
-
-	assert_fatal(end.x <= internal_size.x && end.y <= internal_size.y);
-
-	assert_else(end.x <= internal_size.x && end.y <= internal_size.y, return );
+	assert_else(internal_upper_right.x <= internal_size.x && internal_upper_right.y <= internal_size.y, return );
 
 	// SetMemoryArea size is inclusive
-	SetMemoryArea(lower_left.x, lower_left.y, end.x - 1, end.y - 1);
-	SetMemoryPointer(lower_left.x, lower_left.y);
+	SetMemoryArea(internal_lower_left.x, internal_lower_left.y, internal_upper_right.x - 1, internal_upper_right.y - 1);
+	SetMemoryPointer(internal_lower_left.x, internal_lower_left.y);
 	SendCommand(WRITE_RAM);
 	/* send the image data */
 	DigitalWrite(pins.dc, HIGH);

@@ -9,6 +9,22 @@ using std::move;
 class PixelBuffer
 {
 public:
+	static inline Vec2i swap_if_needed(Vec2i point, bool swap_x_y)
+	{
+		return swap_x_y ? Vec2i{point.y, point.x} : point;
+	}
+
+	static inline Vec2i transform_to_display(Vec2i point, Vec2i input_size, Vec2<bool> flip, bool flip_x_y)
+	{
+		if (flip.x)
+			point.x = input_size.x - point.x - 1;
+
+		if (flip.y)
+			point.y = input_size.y - point.y - 1;
+
+		return swap_if_needed(point, flip_x_y);
+	}
+
 	struct ColorRGB
 	{
 		unsigned char r, g, b;
