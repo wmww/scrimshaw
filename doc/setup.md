@@ -23,6 +23,12 @@ Try typing `#`, `~` and `|`. If They don't all work, switch the keyboard layout 
 sudo apt install network-manager git cmake wiringpi libxkbcommon-dev libinput-dev libwayland-dev weston tty-clock
 ```
 
+## Create and edit `~/.config/weston.ini`
+```
+[terminal]
+font-size=9
+```
+
 ## give user access to libinput
 ```
 sudo gpasswd -a $USER input

@@ -5,7 +5,7 @@
 #include "pixel_buffer.h"
 
 Vec2i const epdif_logical_size{296, 128};
-Vec2<bool> const epdif_flip{true, false};
+Vec2<bool> const epdif_flip{false, true};
 bool const epdif_swap_x_y{true};
 
 class Display

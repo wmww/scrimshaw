@@ -94,6 +94,36 @@ void PixelBuffer::copy_from_wl_shm_data(void const* input_data, Vec2i input_size
 	}
 }
 
+bool PixelBuffer::copy_from_pixel_buffer(PixelBuffer* other, Vec2i lower_left)
+{
+	if (!has_data())
+	{
+		log_warning("empty buffer");
+		return false;
+	}
+	bool damage = false;
+	Vec2i point;
+	for (point.y = 0; point.y < size.y; point.y++)
+	{
+		for (point.x = 0; point.x < size.x; point.x++)
+		{
+			Vec2i output_point = point + lower_left;
+			if (output_point.x >= 0 && output_point.y >= 0 && output_point.x < other->get_size().x &&
+				output_point.y < other->get_size().y)
+			{
+				bool* pixel = data.get() + point.x + size.x * point.y;
+				bool const* other_pixel = other->get_data_ptr() + output_point.x + other->get_size().x * output_point.y;
+				if (*other_pixel != *pixel)
+				{
+					damage = true;
+					*pixel = *other_pixel;
+				}
+			}
+		}
+	}
+	return damage;
+}
+
 void PixelBuffer::copy_into_rgb_buffer(ColorRGB* output_data, Vec2i output_size, Vec2i lower_left, ColorRGB on_color,
 									   ColorRGB off_color)
 {

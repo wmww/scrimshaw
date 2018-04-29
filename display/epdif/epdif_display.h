@@ -35,6 +35,8 @@ private:
 	std::unique_ptr<Epd> const epd;
 	bool should_commit{false};
 	Mode mode{MODE_OFF};
+	PixelBuffer last_buffer;
+	PixelBuffer pending_buffer;
 
 	// this is not guaranteed to succeed, check the mode after before assuming it did
 	void set_mode(Mode new_mode);

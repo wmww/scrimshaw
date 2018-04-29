@@ -232,7 +232,7 @@ void libinput_check_events(InputInterface* interface)
 			case LIBINPUT_KEY_STATE_PRESSED: isPressed = true; break;
 			case LIBINPUT_KEY_STATE_RELEASED: isPressed = false; break;
 			}
-			warning("libinput key " + std::to_string(key) + " pressed");
+			debug("libinput key " + std::to_string(key) + " pressed");
 			interface->keyPress(key, isPressed);
 			if (key == 1)
 			{

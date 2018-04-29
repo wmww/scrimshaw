@@ -92,6 +92,7 @@ const struct wl_seat_interface WlSeat::Impl::seatInterface = {
 				munmap(data, dataSize);
 				wl_keyboard_send_keymap(impl->keyboard.getRaw(), WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1, fd, dataSize);
 				close(fd);
+				warning("keymap sent");
 			}
 		},
 	.get_touch =
@@ -221,11 +222,13 @@ void WlSeat::keyPress(uint key, bool down, Resource surface)
 
 	if (keyboard.check(WL_KEYBOARD_ENTER_SINCE_VERSION))
 	{
+		warning("keyboard entering surface");
 		wl_keyboard_send_enter(
 			keyboard.getRaw(), WaylandServer::nextSerialNum(), surface.getRaw(), keysDownArray.getRaw());
 	}
 	if (keyboard.check(WL_KEYBOARD_KEY_SINCE_VERSION))
 	{
+		warning("keyboard sending key " + std::to_string(key) + " " + (down ? "down" : "up"));
 		wl_keyboard_send_key(keyboard.getRaw(),
 							 WaylandServer::nextSerialNum(),
 							 timeSinceStartMili(),
@@ -234,6 +237,7 @@ void WlSeat::keyPress(uint key, bool down, Resource surface)
 	}
 	if (keyboard.check(WL_KEYBOARD_LEAVE_SINCE_VERSION))
 	{
+		warning("keyboard leaving surface");
 		wl_keyboard_send_leave(keyboard.getRaw(), WaylandServer::nextSerialNum(), surface.getRaw());
 	}
 }

@@ -142,7 +142,7 @@ void writeFile(string filepath, const string& contents)
 
 	if (!outFile.is_open())
 	{
-		throw "error writing to '"+filepath+"'";
+		throw "error writing to '" + filepath + "'";
 	}
 	else
 	{

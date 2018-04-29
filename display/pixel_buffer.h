@@ -42,6 +42,8 @@ public:
 	void copy_from_wl_shm_data(void const* input_data, Vec2i input_size, uint32_t format, Vec2i input_clip_lower_left,
 							   Vec2i input_clip_size, Vec2i final_size);
 
+	// returns true if there was damage
+	bool copy_from_pixel_buffer(PixelBuffer*, Vec2i lower_left);
 	void copy_into_rgb_buffer(ColorRGB* output_data, Vec2i output_size, Vec2i lower_left, ColorRGB on_color,
 							  ColorRGB off_color);
 	void send_packed_bits(void (*func)(unsigned char));

@@ -23,22 +23,33 @@ std::unique_ptr<Display> Display::get()
 EpdifDisplay::EpdifDisplay(Pins const& pins, Vec2i size_, Vec2<bool> flip_, bool swap_x_y_)
 	: size{size_}, epd{std::make_unique<Epd>(pins, size_, flip_, swap_x_y_)}
 {
+	last_buffer.create_empty(size);
+	pending_buffer.create_empty(size);
 	render_thread = std::thread([this]() {
 		while (!die)
 		{
 			executor.iteration();
 			if (should_commit)
 			{
-				set_mode(MODE_FULL_UPDATE);
+				bool buffer_damaged = last_buffer.copy_from_pixel_buffer(&pending_buffer, {});
 
-				assert_else(mode == MODE_FULL_UPDATE, return );
+				if (buffer_damaged)
+				{
+					set_mode(MODE_FULL_UPDATE);
 
-				epd->DisplayFrame();
+					assert_else(mode == MODE_FULL_UPDATE, return );
+
+					epd->DisplayFrame();
+				}
+				else
+				{
+					log_warning("commit called but buffer not damaged");
+				}
 				should_commit = false;
 			}
 			else
 			{
-				usleep(0.02 * 1000000);
+				usleep(0.1 * 1000000);
 			}
 		}
 		set_mode(MODE_OFF);
@@ -66,6 +77,7 @@ void EpdifDisplay::commit()
 
 			for (auto& i : *buffers)
 			{
+				pending_buffer.copy_from_pixel_buffer(&i.first, i.second);
 				epd->SetFrameMemory(move(i.first), i.second);
 			}
 			if (!buffers->empty())

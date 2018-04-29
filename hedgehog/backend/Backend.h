@@ -14,6 +14,7 @@ public:
 	virtual void checkEvents() = 0;
 	string getKeymap() { return keymapString; }
 	void setInputInterface(weak_ptr<InputInterface> ptr) { inputInterface = ptr; }
+	weak_ptr<InputInterface> get_input_interface() { return inputInterface; }
 
 	enum Type { X11_GLX, X11_EGL, DRM, SCRIMSHAW };
 	static void setup(Type type);

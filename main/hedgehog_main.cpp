@@ -35,13 +35,14 @@ int main(int argc, char** argv)
 		WaylandServer::iteration();
 		// scene.draw();
 		Backend::instance->swapBuffer();
-		sleepForSeconds(0.01667);
+		// sleepForSeconds(0.01667);
+		sleepForSeconds(0.1);
 		Backend::instance->checkEvents();
 		// ticks++;
 		// double endTime = timeSinceStart();
 		// debug("FPS: " + to_string(ticks / (endTime - startTime)));
 
-		if (timeSinceStart() > 30)
+		if (timeSinceStart() > 150)
 			break;
 	}
 
