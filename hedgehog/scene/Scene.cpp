@@ -10,23 +10,25 @@ Scene Scene::instance;
 
 struct Scene::Impl : InputInterface
 {
+	/*
 	struct Window
 	{
 		weak_ptr<WindowInterface> interface;
 		V2d pos = V2d();
 		V2d size = V2d(0.5, 0.5);
 	};
+	*/
 
-	vector<Window> windows;
-	V2d lastMousePos;
+	vector<weak_ptr<WindowInterface>> windowInterfaces;
+	// V2d lastMousePos;
 
-	Window getActiveWindow()
+	weak_ptr<WindowInterface> getActiveWindow()
 	{
 		// TODO: OPTIMIZATION: do this well
-		Window active;
-		for (auto i : windows)
+		weak_ptr<WindowInterface> active;
+		for (auto i : windowInterfaces)
 		{
-			if (!i.interface.expired())
+			if (!i.expired())
 				active = i;
 		}
 		return active;
@@ -34,6 +36,8 @@ struct Scene::Impl : InputInterface
 
 	void pointerMotion(V2d newPos)
 	{
+		debug("does nothing");
+		/*
 		Window window = getActiveWindow();
 		if (auto interface = window.interface.lock())
 		{
@@ -43,10 +47,13 @@ struct Scene::Impl : InputInterface
 			V2d transformed = V2d((newPos.x - window.pos.x) / window.size.x, (newPos.y - window.pos.y) / window.size.y);
 			input->pointerMotion(transformed);
 		}
+		*/
 	}
 
 	void pointerLeave()
 	{
+		debug("does nothing");
+		/*
 		Window window = getActiveWindow();
 		if (auto interface = window.interface.lock())
 		{
@@ -54,10 +61,13 @@ struct Scene::Impl : InputInterface
 			ASSERT_ELSE(input, return );
 			input->pointerLeave();
 		}
+		*/
 	}
 
 	void pointerClick(uint button, bool down)
 	{
+		debug("does nothing");
+		/*
 		Window window = getActiveWindow();
 		if (auto interface = window.interface.lock())
 		{
@@ -65,12 +75,13 @@ struct Scene::Impl : InputInterface
 			ASSERT_ELSE(input, return );
 			input->pointerClick(button, down);
 		}
+		*/
 	}
 
 	void keyPress(uint key, bool down)
 	{
-		Window window = getActiveWindow();
-		if (auto interface = window.interface.lock())
+		weak_ptr<WindowInterface> window = getActiveWindow();
+		if (auto interface = window.lock())
 		{
 			auto input = interface->getInputInterface().lock();
 			ASSERT_ELSE(input, return );
@@ -90,10 +101,11 @@ void Scene::addWindow(weak_ptr<WindowInterface> window)
 {
 	debug("adding window to scene");
 	ASSERT_ELSE(impl, return );
-	Impl::Window data;
-	data.interface = window;
-	data.pos = V2d(impl->windows.size() % 2 ? 0 : 0.5, (impl->windows.size() / 2) % 2 ? 0 : 0.5);
-	impl->windows.push_back(data);
+	// Impl::Window data;
+	// data.interface = window;
+	// data.pos = V2d(impl->windows.size() % 2 ? 0 : 0.5, (impl->windows.size() / 2) % 2 ? 0 : 0.5);
+	// impl->windows.push_back(data);
+	impl->windowInterfaces.push_back(window);
 }
 
 weak_ptr<InputInterface> Scene::getInputInterface()
