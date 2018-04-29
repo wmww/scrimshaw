@@ -90,6 +90,8 @@ void logMessage(string source, MessageType type, string messaage); // this funct
 // loads an entire file into the contents string, returns if it succeeded
 bool loadFile(string filename, string& contents);
 
+void writeFile(string filepath, const string& contents);
+
 // sleep for the given number of seconds (millisecond precision)
 void sleepForSeconds(double seconds);
 

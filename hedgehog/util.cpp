@@ -134,6 +134,24 @@ bool loadFile(string filename, string& contents)
 	}
 }
 
+void writeFile(string filepath, const string& contents)
+{
+	std::ofstream outFile;
+
+	outFile.open(filepath);
+
+	if (!outFile.is_open())
+	{
+		throw "error writing to '"+filepath+"'";
+	}
+	else
+	{
+		outFile << contents;
+
+		outFile.close();
+	}
+}
+
 void sleepForSeconds(double seconds)
 {
 	std::this_thread::sleep_for(std::chrono::milliseconds((int)(seconds * 1000)));

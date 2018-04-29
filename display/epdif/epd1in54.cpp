@@ -32,11 +32,12 @@
 Epd::~Epd(){};
 
 Epd::Epd(EpdifDisplay::Pins const& pins_, Vec2i size_, Vec2<bool> flip_, bool swap_x_y_)
-	: pins{pins_},
+	: external_size{size_},
 	  internal_size{PixelBuffer::swap_if_needed(size_, swap_x_y_)},
-	  external_size{size_},
 	  flip{flip_},
-	  swap_x_y{swap_x_y_} {};
+	  swap_x_y{swap_x_y_},
+	  pins{pins_}
+{}
 
 int Epd::Init(const unsigned char* lut)
 {

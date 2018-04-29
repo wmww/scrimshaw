@@ -41,7 +41,7 @@ int main(int argc, char** argv)
 		// double endTime = timeSinceStart();
 		// debug("FPS: " + to_string(ticks / (endTime - startTime)));
 
-		if (timeSinceStart() > 12)
+		if (timeSinceStart() > 30)
 			break;
 	}
 
