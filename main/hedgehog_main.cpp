@@ -36,7 +36,7 @@ int main(int argc, char** argv)
 		// scene.draw();
 		Backend::instance->swapBuffer();
 		// sleepForSeconds(0.01667);
-		sleepForSeconds(4);
+		sleepForSeconds(0.5);
 		Backend::instance->checkEvents();
 		// ticks++;
 		// double endTime = timeSinceStart();
