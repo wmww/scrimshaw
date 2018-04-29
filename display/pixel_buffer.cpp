@@ -88,7 +88,7 @@ void PixelBuffer::copy_from_wl_shm_data(void const* input_data, Vec2i input_size
 				input_point.y < input_size.y)
 			{
 				Color color = static_cast<Color const*>(input_data)[input_point.x + input_size.x * input_point.y];
-				data[point.x + size.x * point.y] = (color.r + color.g + color.b) > 128 * 3;
+				data[point.x + size.x * point.y] = (color.r + color.g + color.b) < 128 * 3;
 			}
 		}
 	}
