@@ -26,6 +26,8 @@ EpdifDisplay::EpdifDisplay(Pins const& pins, Vec2i size_, Vec2<bool> flip_, bool
 	last_buffer.create_empty(size);
 	pending_buffer.create_empty(size);
 	render_thread = std::thread([this]() {
+		double const sleep_seconds = 0.1;
+		double seconds_without_damage = 0;
 		while (!die)
 		{
 			executor.iteration();
@@ -43,13 +45,16 @@ EpdifDisplay::EpdifDisplay(Pins const& pins, Vec2i size_, Vec2<bool> flip_, bool
 				}
 				else
 				{
-					log_warning("commit called but buffer not damaged");
+					// log_warning("commit called but buffer not damaged");
 				}
 				should_commit = false;
 			}
 			else
 			{
-				usleep(0.1 * 1000000);
+				usleep(sleep_seconds * 1000000);
+				seconds_without_damage += sleep_seconds;
+				if (seconds_without_damage > 4)
+					set_mode(MODE_OFF);
 			}
 		}
 		set_mode(MODE_OFF);
