@@ -5,12 +5,12 @@
 
 #include <string.h>
 
-/*
-void clamp_range(int& a_size, int& a_clip_corner, int& a_clip_size, int& b_size, int& b_clip_corner, int& b_clip_size)
+inline void clamp_range(int& a_size, int& a_clip_corner, int& a_clip_size, int& b_size, int& b_clip_corner,
+						int& b_clip_size)
 {
 	if (a_clip_corner < 0)
 	{
-		int b_offset = ((- a_clip_corner) * b_clip_size) / a_clip_size;
+		int b_offset = ((-a_clip_corner) * b_clip_size) / a_clip_size;
 		b_clip_corner += b_offset;
 		b_clip_size -= b_offset;
 		a_clip_size += a_clip_corner;
@@ -25,34 +25,40 @@ void clamp_range(int& a_size, int& a_clip_corner, int& a_clip_size, int& b_size,
 	return a_clip_size > 0 && b_clip_size > 0;
 }
 
-void copy_buffer(void const* input_data, Vec2i input_size, Vec2i input_clip_corner, Vec2i input_clip_size,
-				 void* output_data, Vec2i output_size, Vec2i output_clip_corner, Vec2i output_clip_size)
 {
-#define call_clamp(a, b, c) \
+#define CALL_CLAMP(a, b, c) \
 	clamp_range(a_size.c, a_clip_corner.c, a_clip_size.c, b_size.c b_clip_corner.c, b_clip_size.a)
 
-#define for_range(a) for (output_point.a = output_clip_corner.a; output_point.a < output_max.a; output_point.a++,
-input_point.a = ((output_point.a - output_clip_corner.a) * input_clip_size.a) / output_clip_size.a +
-input_clip_corner.a)
+#define FOR_RANGE(a)                                                                                         \
+	for (output_point.a = output_clip_corner.a; output_point.a < output_max.a; output_point.a++,             \
+		input_point.a = ((output_point.a - output_clip_corner.a) * input_clip_size.a) / output_clip_size.a + \
+																			   input_clip_corner.a)
 
-	if (call_clamp(input, output, x) &&
-		call_clamp(input, output, y) &&
-		call_clamp(output, input, x) &&
-		call_clamp(output, input, y))
-	{
-		Vec2i output_max = output_clip_corner + output_clip_size;
-		Vec2i output_point;
-		Vec2i input_point;
-
-		for_range (y)
-		{
-
-		}
-	}
-
-#undef call_clamp
+#define COPY_BUFFER(INPUT_GET_ROW, INPUT_GET_PIXEL, OUTPUT_GET_ROW, OUTPUT_GET_PIXEL) \
+{ \
+	if (CALL_CLAMP(input, output, x) && CALL_CLAMP(input, output, y) && CALL_CLAMP(output, input, x) && \
+		CALL_CLAMP(output, input, y)) \
+	{ \
+		Vec2i output_max = output_clip_corner + output_clip_size; \
+		Vec2i output_point; \
+		Vec2i input_point; \
+		FOR_RANGE(y) \
+		{ \
+			void* const input_row = INPUT_GET_ROW(input_point.y, input_size.x); \
+			void* const output_row = OUTPUT_GET_ROW(output_point.y. output_size.x); \
+			FOR_RANGE(x) \
+			{ \
+				OUTPUT_ASSIGN_PIXEL(output_row, output_point.x, INPUT_GET_PIXEL(input_row, input_point.x)); \
+			} \
+		} \
+	} \
 }
-*/
+
+#undef CALL_CLAMP
+#undef FOR_RANGE
+
+void copy_buffer(void const* input_data, Vec2i input_size, Vec2i input_clip_corner, Vec2i input_clip_size,
+				 void* output_data, Vec2i output_size, Vec2i output_clip_corner, Vec2i output_clip_size)
 
 void PixelBuffer::create_empty(Vec2i size_)
 {
@@ -63,7 +69,7 @@ void PixelBuffer::create_empty(Vec2i size_)
 
 void PixelBuffer::copy_from_wl_shm_data(void const* input_data, Vec2i input_size, uint32_t format,
 										Vec2i input_clip_lower_left, Vec2i input_clip_size, Vec2i final_size)
-{
+
 	if (format != WL_SHM_FORMAT_ARGB8888)
 	{
 		log_message(std::string() + "unsupported SHM format " + wl_shm_format_get_name(format));
