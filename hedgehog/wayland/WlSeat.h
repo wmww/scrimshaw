@@ -3,7 +3,10 @@
 #include "WaylandServer.h"
 #include "Resource.h"
 
-const uint wl_seat_MAX_VERSION = 6;
+#include <wayland-version.h>
+
+// fix raspberry pi issue
+const uint wl_seat_MAX_VERSION = WAYLAND_VERSION_MINOR >= 14 ? 6 : 5;
 
 class WlSeat
 {
