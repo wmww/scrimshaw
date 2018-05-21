@@ -6,9 +6,8 @@
 #include "WlRegion.h"
 #include "WlShellSurface.h"
 #include "XdgShellV6Surface.h"
+#include "protocols/wayland.h"
 
-#include <wayland-server.h>
-#include <wayland-server-protocol.h>
 #include "protocols/xdg-shell-unstable-v6.h"
 
 #include "../backend/Backend.h"

@@ -1,4 +1,4 @@
-#include <wayland-server-protocol.h>
+#include "protocols/wayland.h"
 #include "WlRegion.h"
 #include "Resource.h"
 

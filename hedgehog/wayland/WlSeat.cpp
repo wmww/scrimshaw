@@ -4,8 +4,10 @@
 #include "WlSurface.h"
 #include "../backend/Backend.h"
 #include "../scene/Scene.h"
+#include "protocols/wayland.h"
 
-#include <wayland-server-protocol.h>
+#include <wayland-server.h>
+
 #include <unordered_map>
 #include <fcntl.h>
 #include <unistd.h>

@@ -1,4 +1,4 @@
-#include <wayland-server-protocol.h>
+#include "protocols/wayland.h"
 #include "WlDataDeviceManager.h"
 #include "Resource.h"
 #include "WlArray.h"

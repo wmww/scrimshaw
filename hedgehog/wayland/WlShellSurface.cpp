@@ -2,8 +2,7 @@
 #include "../scene/WindowInterface.h"
 #include "Resource.h"
 #include "WlSeat.h"
-
-#include <wayland-server-protocol.h>
+#include "protocols/wayland.h"
 
 // change to toggle debug statements on and off
 #define debug debug_off
