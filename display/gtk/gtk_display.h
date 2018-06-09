@@ -21,6 +21,7 @@ public:
 
 private:
 	void draw_window();
+	void clear_window(PixelBuffer::ColorRGB color);
 
 	PixelBuffer::ColorRGB const on_color{12, 27, 15};
 	PixelBuffer::ColorRGB const off_color{198, 243, 204};
@@ -35,6 +36,8 @@ private:
 	GdkPixbuf* const pixbuf;
 
 	std::atomic<bool> die{false};
+	bool should_commit{false};
+	bool has_drawn{false};
 	std::thread gtk_thread;
 	Executor executor;
 };

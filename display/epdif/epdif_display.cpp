@@ -34,6 +34,7 @@ EpdifDisplay::EpdifDisplay(Pins const& pins, Vec2i size_, Vec2<bool> flip_, bool
 			if (should_commit)
 			{
 				bool buffer_damaged = last_buffer.copy_from_pixel_buffer(&pending_buffer, {});
+				buffer_damaged = true;
 
 				if (buffer_damaged)
 				{
@@ -53,7 +54,7 @@ EpdifDisplay::EpdifDisplay(Pins const& pins, Vec2i size_, Vec2<bool> flip_, bool
 			{
 				usleep(sleep_seconds * 1000000);
 				seconds_without_damage += sleep_seconds;
-				//if (seconds_without_damage > 4)
+				// if (seconds_without_damage > 4)
 				//	set_mode(MODE_OFF);
 			}
 		}

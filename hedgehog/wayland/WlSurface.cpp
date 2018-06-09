@@ -69,6 +69,8 @@ const struct wl_surface_interface WlSurface::Impl::surfaceInterface = {
 			debug("wl_surface.damage called");
 			// TODO: OPTIMIZATION: only repaint damaged region
 			IMPL_FROM(resource);
+			warning("got damage: " + to_string(x) + ", " + to_string(y) + ", " + to_string(width) + ", " +
+					to_string(height));
 			impl->isDamaged = true;
 		},
 	.frame =
@@ -96,6 +98,7 @@ const struct wl_surface_interface WlSurface::Impl::surfaceInterface = {
 			struct wl_resource* buffer = impl->bufferResourceRaw;
 			if (buffer != nullptr && impl->isDamaged)
 			{
+				warning("committing buffer");
 				// EGLint texture_format;
 				ASSERT_ELSE(Backend::instance, return );
 				// Display * display = (Display *)Backend::instance->getXDisplay();
@@ -155,6 +158,7 @@ const struct wl_surface_interface WlSurface::Impl::surfaceInterface = {
 				impl->bufferResourceRaw = nullptr;
 				impl->dim = V2d(bufferDim.x, bufferDim.y);
 			}
+			impl->isDamaged = false;
 		},
 	.set_buffer_transform = +[](wl_client* client, wl_resource* resource,
 								int32_t transform) { warning("wl_surface.set_buffer_transform not implemented"); },
@@ -166,8 +170,13 @@ const struct wl_surface_interface WlSurface::Impl::surfaceInterface = {
 				warning("scale is " + to_string(scale) + " which is not 1 and thus shouldn't be ignored");
 			}
 		},
-	.damage_buffer = +[](struct wl_client* client, struct wl_resource* resource, int32_t x, int32_t y, int32_t width,
-						 int32_t height) { warning("wl_surface.damage_buffer not implemented"); },
+	.damage_buffer =
+		+[](struct wl_client* client, struct wl_resource* resource, int32_t x, int32_t y, int32_t width,
+			int32_t height) {
+			warning("wl_surface.damage_buffer not implemented");
+			IMPL_FROM(resource);
+			impl->isDamaged = true;
+		},
 };
 
 WlSurface::WlSurface(wl_client* client, uint32_t id, uint version)
