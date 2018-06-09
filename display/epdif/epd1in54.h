@@ -78,8 +78,12 @@ public:
 	void DisplayFrame(void);
 	void Sleep(void);
 
+	// returns true on success
+	bool set_mode(DisplayMode new_mode);
+
 private:
 	EpdifDisplay::Pins const pins;
+	DisplayMode mode{DisplayMode::off};
 	const unsigned char* lut;
 
 	void SetLut(const unsigned char* lut);
