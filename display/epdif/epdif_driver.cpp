@@ -25,13 +25,13 @@
  */
 
 #include <stdlib.h>
-#include "epd1in54.h"
+#include "epdif_driver.h"
 
 #include "util/logger.h"
 
-Epd::~Epd(){};
+EpdDriver::~EpdDriver(){};
 
-Epd::Epd(EpdifDisplay::Pins const& pins_, Vec2i size_, Vec2<bool> flip_, bool swap_x_y_)
+EpdDriver::EpdDriver(EpdifDisplay::Pins const& pins_, Vec2i size_, Vec2<bool> flip_, bool swap_x_y_)
 	: external_size{size_},
 	  internal_size{PixelBuffer::swap_if_needed(size_, swap_x_y_)},
 	  flip{flip_},
@@ -39,7 +39,7 @@ Epd::Epd(EpdifDisplay::Pins const& pins_, Vec2i size_, Vec2<bool> flip_, bool sw
 	  pins{pins_}
 {}
 
-int Epd::Init(const unsigned char* lut)
+int EpdDriver::Init(const unsigned char* lut)
 {
 	/* this calls the peripheral hardware interface, see epdif */
 	if (IfInit(pins.reset, pins.dc, pins.busy) != 0)
@@ -73,7 +73,7 @@ int Epd::Init(const unsigned char* lut)
 /**
  *  @brief: basic function for sending commands
  */
-void Epd::SendCommand(unsigned char command)
+void EpdDriver::SendCommand(unsigned char command)
 {
 	DigitalWrite(pins.dc, LOW);
 	SpiTransfer(command);
@@ -82,7 +82,7 @@ void Epd::SendCommand(unsigned char command)
 /**
  *  @brief: basic function for sending data
  */
-void Epd::SendData(unsigned char data)
+void EpdDriver::SendData(unsigned char data)
 {
 	DigitalWrite(pins.dc, HIGH);
 	SpiTransfer(data);
@@ -91,7 +91,7 @@ void Epd::SendData(unsigned char data)
 /**
  *  @brief: Wait until the pins.busy goes LOW
  */
-void Epd::WaitUntilIdle(void)
+void EpdDriver::WaitUntilIdle(void)
 {
 	while (DigitalRead(pins.busy) == HIGH)
 	{ // LOW: idle, HIGH: busy
@@ -102,9 +102,9 @@ void Epd::WaitUntilIdle(void)
 /**
  *  @brief: module reset.
  *          often used to awaken the module in deep sleep,
- *          see Epd::Sleep();
+ *          see EpdDriver::Sleep();
  */
-void Epd::Reset(void)
+void EpdDriver::Reset(void)
 {
 	DigitalWrite(pins.reset, LOW); // module reset
 	DelayMs(200);
@@ -115,7 +115,7 @@ void Epd::Reset(void)
 /**
  *  @brief: set the look-up table register
  */
-void Epd::SetLut(const unsigned char* lut)
+void EpdDriver::SetLut(const unsigned char* lut)
 {
 	this->lut = lut;
 	SendCommand(WRITE_LUT_REGISTER);
@@ -130,7 +130,7 @@ void Epd::SetLut(const unsigned char* lut)
  *  @brief: put an image buffer to the frame memory.
  *          this won't update the display.
  */
-void Epd::SetFrameMemory(PixelBuffer buffer, Vec2i external_lower_left)
+void EpdDriver::SetFrameMemory(PixelBuffer buffer, Vec2i external_lower_left)
 {
 	Vec2i external_upper_right = external_lower_left + buffer.get_size();
 	Vec2i external_lower_left_transformed =
@@ -167,7 +167,7 @@ void Epd::SetFrameMemory(PixelBuffer buffer, Vec2i external_lower_left)
  *  @brief: clear the frame memory with the specified color.
  *          this won't update the display.
  */
-void Epd::ClearFrameMemory(unsigned char color)
+void EpdDriver::ClearFrameMemory(unsigned char color)
 {
 	SetMemoryArea(0, 0, this->internal_size.x - 1, this->internal_size.y - 1);
 	SetMemoryPointer(0, 0);
@@ -186,7 +186,7 @@ void Epd::ClearFrameMemory(unsigned char color)
  *          the the next action of SetFrameMemory or ClearFrame will
  *          set the other memory area.
  */
-void Epd::DisplayFrame(void)
+void EpdDriver::DisplayFrame(void)
 {
 	SendCommand(DISPLAY_UPDATE_CONTROL_2);
 	SendData(0xC4);
@@ -198,7 +198,7 @@ void Epd::DisplayFrame(void)
 /**
  *  @brief: private function to specify the memory area for data R/W
  */
-void Epd::SetMemoryArea(int x_start, int y_start, int x_end, int y_end)
+void EpdDriver::SetMemoryArea(int x_start, int y_start, int x_end, int y_end)
 {
 	SendCommand(SET_RAM_X_ADDRESS_START_END_POSITION);
 	/* x point must be the multiple of 8 or the last 3 bits will be ignored */
@@ -214,7 +214,7 @@ void Epd::SetMemoryArea(int x_start, int y_start, int x_end, int y_end)
 /**
  *  @brief: private function to specify the start point for data R/W
  */
-void Epd::SetMemoryPointer(int x, int y)
+void EpdDriver::SetMemoryPointer(int x, int y)
 {
 	SendCommand(SET_RAM_X_ADDRESS_COUNTER);
 	/* x point must be the multiple of 8 or the last 3 bits will be ignored */
@@ -229,15 +229,15 @@ void Epd::SetMemoryPointer(int x, int y)
  *  @brief: After this command is transmitted, the chip would enter the
  *          deep-sleep mode to save power.
  *          The deep sleep mode would return to standby by hardware reset.
- *          You can use Epd::Init() to awaken
+ *          You can use EpdDriver::Init() to awaken
  */
-void Epd::Sleep()
+void EpdDriver::Sleep()
 {
 	SendCommand(DEEP_SLEEP_MODE);
 	WaitUntilIdle();
 }
 
-bool Epd::set_mode(DisplayMode new_mode)
+bool EpdDriver::set_mode(DisplayMode new_mode)
 {
 	if (new_mode == DisplayMode::off)
 	{

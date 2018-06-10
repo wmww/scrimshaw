@@ -58,7 +58,7 @@
 extern const unsigned char lut_full_update[];
 extern const unsigned char lut_partial_update[];
 
-class Epd : public EpdIf
+class EpdDriver : public EpdIf
 {
 public:
 	Vec2i const external_size;
@@ -66,8 +66,8 @@ public:
 	Vec2<bool> const flip;
 	bool const swap_x_y;
 
-	Epd(EpdifDisplay::Pins const& pins, Vec2i size_, Vec2<bool> flip_, bool swap_x_y_);
-	~Epd();
+	EpdDriver(EpdifDisplay::Pins const& pins, Vec2i size_, Vec2<bool> flip_, bool swap_x_y_);
+	~EpdDriver();
 	int Init(const unsigned char* lut);
 	void SendCommand(unsigned char command);
 	void SendData(unsigned char data);

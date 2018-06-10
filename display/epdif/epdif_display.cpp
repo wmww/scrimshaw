@@ -1,6 +1,6 @@
 #include "epdif_display.h"
 
-#include "epd1in54.h"
+#include "epdif_driver.h"
 
 #include "logger.h"
 
@@ -21,7 +21,7 @@ std::unique_ptr<Display> Display::get()
 }
 
 EpdifDisplay::EpdifDisplay(Pins const& pins, Vec2i size_, Vec2<bool> flip_, bool swap_x_y_)
-	: size{size_}, epd{std::make_unique<Epd>(pins, size_, flip_, swap_x_y_)}
+	: epd{std::make_unique<EpdDriver>(pins, size_, flip_, swap_x_y_)}, size{size_}
 {
 	last_buffer.create_empty(size);
 	pending_buffer.create_empty(size);

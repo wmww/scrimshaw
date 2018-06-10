@@ -6,9 +6,13 @@
 #include <thread>
 #include <atomic>
 
-class Epd;
+class EpdDriver;
 
 enum class DisplayMode { off, full_update, partial_update };
+
+// EPDIF stands for Electronic Paper Display InterFace. I know Electronic Paper Display InterFace Display is a bad name,
+// but I just refer to all things to do with [this model](https://www.waveshare.com/wiki/2.9inch_e-Paper_Module) as
+// EPDIF
 
 class EpdifDisplay : public Display
 {
@@ -32,7 +36,7 @@ private:
 	std::vector<std::pair<PixelBuffer, Vec2i>> pending_buffers;
 
 	// render thread
-	std::unique_ptr<Epd> const epd;
+	std::unique_ptr<EpdDriver> const epd;
 	bool should_commit{false};
 	PixelBuffer last_buffer;
 	PixelBuffer pending_buffer;
