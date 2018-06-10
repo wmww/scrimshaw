@@ -66,7 +66,7 @@ void PixelBuffer::copy_from_wl_shm_data(void const* input_data, Vec2i input_size
 {
 	if (format != WL_SHM_FORMAT_ARGB8888)
 	{
-		log_message(std::string() + "unsupported SHM format " + wl_shm_format_get_name(format));
+		log_warning(std::string() + "unsupported SHM format " + wl_shm_format_get_name(format));
 		return;
 	}
 
@@ -204,4 +204,37 @@ void PixelBuffer::send_packed_bits_transformed(void (*func)(unsigned char), Vec2
 			func(packed_data);
 		}
 	}
+}
+
+std::pair<std::unique_ptr<unsigned char[]>, size_t> PixelBuffer::pack_bits_transformed(Vec2<bool> flip, bool swap_x_y)
+{
+	if (!has_data())
+	{
+		log_warning("empty buffer");
+		return std::pair<std::unique_ptr<unsigned char[]>, size_t>(nullptr, 0);
+	}
+	auto output_size = swap_if_needed(size, swap_x_y);
+	if (output_size.x % 8 != 0)
+	{
+		log_warning("width " + std::to_string(size.x) + " is not divisible by 8, will attempt to clip");
+	}
+	size_t output_buffer_len = (output_size.x / 8) * output_size.y;
+	auto output = std::pair<std::unique_ptr<unsigned char[]>, size_t>(std::unique_ptr<unsigned char[]>(new unsigned char[output_buffer_len]), output_buffer_len);
+	auto ptr = output.first.get();
+	Vec2i output_point;
+	for (output_point.y = 0; output_point.y < output_size.y; output_point.y++)
+	{
+		for (int output_chunk_x = 0; output_chunk_x < output_size.x / 8; output_chunk_x++)
+		{
+			*ptr = 0;
+			for (int i = 0; i < 8; i++)
+			{
+				output_point.x = output_chunk_x * 8 + i;
+				Vec2i input_point = transform_to_display(output_point, output_size, flip, swap_x_y);
+				*ptr |= (0x80 >> i) * data.get()[input_point.x + size.x * input_point.y];
+			}
+			ptr++;
+		}
+	}
+	return output;
 }

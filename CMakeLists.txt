@@ -39,13 +39,26 @@ file(GLOB epdif_display_sources
 
 set(epdif_libs)
 
-set(GLOB emulator_sources
+file(GLOB emulator_sources
 	emulator/*.cpp)
 
 file(GLOB display_test_sources
      main/display_test_main.cpp)
 
 include_directories(".")
+
+find_library(WIRING_PI_LIB wiringPi)
+
+if (WIRING_PI_LIB)
+    message("Wiring Pi found")
+    set(scrimshaw_libs ${scrimshaw_libs}
+        -lwiringPi)
+else()
+    message("Wiring Pi not found")
+    add_definitions(-DEMULATED_WIRING_PI)
+	set(scrimshaw_sources ${scrimshaw_sources}
+		${emulator_sources})
+endif()
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(gtk3 gtk+-3.0)
@@ -72,19 +85,6 @@ if(gtk3_FOUND)
 
 else()
     message("GTK not found")
-endif()
-
-find_library(WIRING_PI_LIB wiringPi)
-
-if (WIRING_PI_LIB)
-    message("Wiring Pi found")
-    set(scrimshaw_libs ${scrimshaw_libs}
-        -lwiringPi)
-else()
-    message("Wiring Pi not found")
-    add_definitions(-DEMULATED_WIRING_PI)
-	set(scrimshaw_sources ${scrimshaw_sources}
-		${emulator_sources})
 endif()
 
 add_executable(test_epdif ${epdif_display_sources} ${display_test_sources} ${scrimshaw_sources})

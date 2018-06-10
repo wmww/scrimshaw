@@ -10,12 +10,12 @@ void sleep_for(double seconds)
 
 namespace
 {
-std::chrono::high_resolution_clock::time_point program_start_time = std::chrono::high_resolution_clock::now();
+std::chrono::steady_clock::time_point program_start_time = std::chrono::steady_clock::now();
 }
 
 double get_time()
 {
-	return (std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::high_resolution_clock::now() -
+	return (std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now() -
 	program_start_time))
 	.count();
 }

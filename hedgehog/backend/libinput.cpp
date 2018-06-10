@@ -236,7 +236,7 @@ void libinput_check_events(InputInterface* interface)
 			interface->keyPress(key, isPressed);
 			if (key == 1)
 			{
-				warning("esc pressed, quiting...");
+				log_message("ESC pressed, quiting...");
 				stop = true;
 			}
 			// print_key_event(li, ev);

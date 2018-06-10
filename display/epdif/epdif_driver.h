@@ -27,8 +27,8 @@
 #ifndef EPD1IN54_H
 #	define EPD1IN54_H
 
-#	include "epdif.h"
 #	include "util/vec2.h"
+#include "gpio/gpio.h"
 #	include "display/pixel_buffer.h"
 #	include "display/epdif/epdif_display.h"
 
@@ -58,7 +58,7 @@
 extern const unsigned char lut_full_update[];
 extern const unsigned char lut_partial_update[];
 
-class EpdDriver : public EpdIf
+class EpdDriver
 {
 public:
 	Vec2i const external_size;
@@ -82,7 +82,11 @@ public:
 	bool set_mode(DisplayMode new_mode);
 
 private:
-	EpdifDisplay::Pins const pins;
+	unique_ptr<Gpio::Output> reset_pin;
+	unique_ptr<Gpio::Output> dc_pin;
+	unique_ptr<Gpio::Output> cs_pin;
+	unique_ptr<Gpio::Input> busy_pin;
+	unique_ptr<Gpio::Spi> spi_channel;
 	DisplayMode mode{DisplayMode::off};
 	const unsigned char* lut;
 

@@ -12,14 +12,14 @@ public:
 	class Output
 	{
 	public:
-		virtual void write(bool state) = 0;
+		virtual void set(bool state) = 0;
 		virtual ~Output() = default;
 	};
 
 	class Input
 	{
 	public:
-		virtual bool read() = 0;
+		virtual bool get() = 0;
 		virtual ~Input() = default;
 	};
 

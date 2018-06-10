@@ -48,6 +48,7 @@ public:
 							  ColorRGB off_color);
 	void send_packed_bits(void (*func)(unsigned char));
 	void send_packed_bits_transformed(void (*func)(unsigned char), Vec2<bool> flip, bool swap_x_y);
+	std::pair<std::unique_ptr<unsigned char[]>, size_t> pack_bits_transformed(Vec2<bool> flip, bool swap_x_y);
 
 	void clear()
 	{

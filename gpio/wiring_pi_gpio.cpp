@@ -1,5 +1,5 @@
 #include "gpio/gpio.h"
-#include "gpio/unique_gpip.h"
+#include "gpio/unique_gpio.h"
 #include "util/logger.h"
 
 #ifdef EMULATED_WIRING_PI
@@ -25,11 +25,16 @@ public:
 			pinMode(this->pin.value(), OUTPUT);
 		}
 
-		void write(bool state) override
+		void set(bool state) override
 		{
+			if (state == cached_state)
+				return;
+			cached_state = state;
 			assert_else(pin, return );
 			digitalWrite(this->pin.value(), state ? HIGH : LOW);
 		}
+
+		bool cached_state{false};
 	};
 
 	class Input : public UniqueGpio::Input
@@ -41,10 +46,10 @@ public:
 			pinMode(pin.value(), INPUT);
 		}
 
-		bool read() override
+		bool get() override
 		{
 			assert_else(pin, return false);
-			digitalRead(pin.value());
+			return digitalRead(pin.value()) == HIGH;
 		}
 	};
 
@@ -54,7 +59,7 @@ public:
 		Spi(int channel_) : UniqueGpio::Spi(channel_)
 		{
 			assert_else(channel, return );
-			assert_fatal(wiringPiSPISetup(channel.value(), 2000000) != -1);
+			assert_nonfatal(wiringPiSPISetup(channel.value(), 2000000) > 0);
 		}
 
 		void send_byte(unsigned char data) override
@@ -74,3 +79,10 @@ public:
 	unique_ptr<Gpio::Input> input(int pin) override { return make_unique<Input>(pin); }
 	unique_ptr<Gpio::Spi> spi(int channel) override { return make_unique<Spi>(channel); }
 };
+
+unique_ptr<Gpio> Gpio::instance_;
+
+unique_ptr<Gpio> Gpio::make()
+{
+	return make_unique<WiringPiGpio>();
+}

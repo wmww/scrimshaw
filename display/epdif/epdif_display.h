@@ -19,7 +19,7 @@ class EpdifDisplay : public Display
 public:
 	struct Pins
 	{
-		unsigned int reset, dc, cs, busy;
+		int reset, dc, cs, busy, spi_channel;
 	};
 
 	EpdifDisplay(Pins const& pins, Vec2i size_, Vec2<bool> flip_, bool swap_x_y_);
