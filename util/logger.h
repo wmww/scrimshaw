@@ -2,6 +2,8 @@
 
 #include <string>
 
+using std::to_string;
+
 enum LogLevel { LOG_MESSAGE, LOG_WARNING, LOG_FATAL };
 
 void log_internal(LogLevel level, std::string file_path, std::string func_name, int line_num, std::string message);

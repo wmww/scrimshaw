@@ -10,7 +10,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
 file(GLOB scrimshaw_sources
      util/*.cpp
-     display/*.cpp)
+     display/*.cpp
+     gpio/*.cpp)
 
 set(scrimshaw_libs
     -lpthread)
@@ -37,6 +38,9 @@ file(GLOB epdif_display_sources
      display/epdif/*.cpp)
 
 set(epdif_libs)
+
+set(GLOB emulator_sources
+	emulator/*.cpp)
 
 file(GLOB display_test_sources
      main/display_test_main.cpp)
@@ -75,11 +79,13 @@ find_library(WIRING_PI_LIB wiringPi)
 
 if (WIRING_PI_LIB)
     message("Wiring Pi found")
-    set(epdif_libs ${epdif_libs}
+    set(scrimshaw_libs ${scrimshaw_libs}
         -lwiringPi)
 else()
     message("Wiring Pi not found")
-    add_definitions(-DMOCK_GPIO)
+    add_definitions(-DEMULATED_WIRING_PI)
+	set(scrimshaw_sources ${scrimshaw_sources}
+		${emulator_sources})
 endif()
 
 add_executable(test_epdif ${epdif_display_sources} ${display_test_sources} ${scrimshaw_sources})

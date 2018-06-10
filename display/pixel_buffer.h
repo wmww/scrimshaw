@@ -32,10 +32,8 @@ public:
 
 	PixelBuffer() = default;
 	~PixelBuffer() = default;
-
 	PixelBuffer(PixelBuffer const&) = delete;
 	PixelBuffer(PixelBuffer&&) = default;
-
 	PixelBuffer& operator=(PixelBuffer const&) = delete;
 
 	static const char* wl_shm_format_get_name(uint32_t format);

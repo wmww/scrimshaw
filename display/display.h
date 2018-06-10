@@ -13,7 +13,11 @@ class Display
 public:
 	static std::unique_ptr<Display> get();
 
-	virtual ~Display() = default;
+	Display() = default;
+	~Display() = default;
+	Display(Display const&) = delete;
+	Display(Display&&) = default;
+	Display& operator=(Display const&) = delete;
 
 	virtual void draw(PixelBuffer buffer, Vec2i lower_left) = 0;
 	virtual void commit() = 0;

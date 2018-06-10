@@ -29,7 +29,7 @@
 #include "logger.h"
 #include <unistd.h>
 
-#ifdef MOCK_GPIO
+#ifdef EMULATED_WIRING_PI
 
 EpdIf::EpdIf()
 {
