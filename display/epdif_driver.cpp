@@ -93,7 +93,6 @@ void EpdDriver::WaitUntilIdle(void)
 	}
 }
 
-
 // module reset.
 // often used to awaken the module in deep sleep,
 // see EpdDriver::Sleep();

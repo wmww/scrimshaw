@@ -7,18 +7,18 @@ string pin_mode_to_string(int mode)
 {
 	switch (mode)
 	{
-		case INPUT: return "INPUT"; break;
-		case OUTPUT: return "OUTPUT"; break;
-		case PWM_OUTPUT: return "PWM_OUTPUT"; break;
-		case GPIO_CLOCK: return "GPIO_CLOCK"; break;
-		case SOFT_PWM_OUTPUT: return "SOFT_PWM_OUTPUT"; break;
-		case SOFT_TONE_OUTPUT: return "SOFT_TONE_OUTPUT"; break;
-		case PWM_TONE_OUTPUT: return "PWM_TONE_OUTPUT"; break;
-		default: return "UNKNOWN LOG LEVEL";
+	case INPUT: return "INPUT"; break;
+	case OUTPUT: return "OUTPUT"; break;
+	case PWM_OUTPUT: return "PWM_OUTPUT"; break;
+	case GPIO_CLOCK: return "GPIO_CLOCK"; break;
+	case SOFT_PWM_OUTPUT: return "SOFT_PWM_OUTPUT"; break;
+	case SOFT_TONE_OUTPUT: return "SOFT_TONE_OUTPUT"; break;
+	case PWM_TONE_OUTPUT: return "PWM_TONE_OUTPUT"; break;
+	default: return "UNKNOWN LOG LEVEL";
 	}
 }
 
-int wiringPiSetupGpio ()
+int wiringPiSetupGpio()
 {
 	log_message("using emulated GPIO");
 	return 0;
@@ -33,18 +33,10 @@ void pullUpDnControl(int pin, int pud)
 {
 	switch (pud)
 	{
-		case PUD_UP:
-			log_message("pin " + to_string(pin) + " set to pull up");
-			break;
-		case PUD_DOWN:
-			log_message("pin " + to_string(pin) + " set to pull down");
-			break;
-		case PUD_OFF:
-			log_message("pin " + to_string(pin) + " pull disabled");
-			break;
-		default:
-			log_message("pin " + to_string(pin) + " unknown pud " + to_string(pud));
-			break;
+	case PUD_UP: log_message("pin " + to_string(pin) + " set to pull up"); break;
+	case PUD_DOWN: log_message("pin " + to_string(pin) + " set to pull down"); break;
+	case PUD_OFF: log_message("pin " + to_string(pin) + " pull disabled"); break;
+	default: log_message("pin " + to_string(pin) + " unknown pud " + to_string(pud)); break;
 	}
 }
 
@@ -66,7 +58,7 @@ int wiringPiSPISetup(int channel, int speed)
 	return -1;
 }
 
-int wiringPiSPIDataRW(int channel, unsigned char *data, int len)
+int wiringPiSPIDataRW(int channel, unsigned char* data, int len)
 {
 	update("transfering " + to_string(len) + " bytes of data on SPI channel " + to_string(channel));
 	// What does this return? Who knows!

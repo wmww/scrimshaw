@@ -57,7 +57,7 @@ FixNamespaceComments: true
 IncludeBlocks:   Preserve
 IncludeIsMainRegex: '(Test)?$'
 IndentCaseLabels: false
-IndentPPDirectives: AfterHash
+IndentPPDirectives: None
 IndentWidth:     4
 IndentWrappedFunctionNames: true
 KeepEmptyLinesAtTheStartOfBlocks: false

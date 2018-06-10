@@ -44,10 +44,10 @@
 #define INT_EDGE_RISING 2
 #define INT_EDGE_BOTH 3
 
-int wiringPiSetupGpio () ;
+int wiringPiSetupGpio();
 void pinMode(int pin, int mode);
 void pullUpDnControl(int pin, int pud);
 int digitalRead(int pin);
 void digitalWrite(int pin, int value);
-int wiringPiSPISetup (int channel, int speed) ;
-int wiringPiSPIDataRW (int channel, unsigned char *data, int len) ;
+int wiringPiSPISetup(int channel, int speed);
+int wiringPiSPIDataRW(int channel, unsigned char* data, int len);

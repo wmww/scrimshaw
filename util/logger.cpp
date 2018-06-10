@@ -18,10 +18,10 @@ std::string log_level_color_code(LogLevel level)
 {
 	switch (level)
 	{
-		case LogLevel::message: return "\033[31m";
-		case LogLevel::warning: return "\033[1;33m";
-		case LogLevel::fatal: return "\033[1;31m";
-		default: return "\033[0m";
+	case LogLevel::message: return "\033[31m";
+	case LogLevel::warning: return "\033[1;33m";
+	case LogLevel::fatal: return "\033[1;31m";
+	default: return "\033[0m";
 	}
 }
 
@@ -41,11 +41,14 @@ void log_internal(LogLevel level, std::string file_path, std::string func_name, 
 		stream = &std::cout;
 
 	if (level != LogLevel::message)
-		*stream << log_level_color_code(level) << log_level_to_string(level) << "\033[0m" << " ";
+		*stream << log_level_color_code(level) << log_level_to_string(level) << "\033[0m"
+				<< " ";
 
-	*stream << "\033[0;36m" << "[" << file_path << ":" << line_num;
+	*stream << "\033[0;36m"
+			<< "[" << file_path << ":" << line_num;
 	*stream << (line_num < 1000 ? (line_num < 100 ? (line_num < 10 ? "   " : "  ") : " ") : "");
-	*stream << func_name << "]: " << "\033[0m";
+	*stream << func_name << "]: "
+			<< "\033[0m";
 
 	*stream << message;
 

@@ -219,7 +219,8 @@ std::pair<std::unique_ptr<unsigned char[]>, size_t> PixelBuffer::pack_bits_trans
 		log_warning("width " + std::to_string(size.x) + " is not divisible by 8, will attempt to clip");
 	}
 	size_t output_buffer_len = (output_size.x / 8) * output_size.y;
-	auto output = std::pair<std::unique_ptr<unsigned char[]>, size_t>(std::unique_ptr<unsigned char[]>(new unsigned char[output_buffer_len]), output_buffer_len);
+	auto output = std::pair<std::unique_ptr<unsigned char[]>, size_t>(
+		std::unique_ptr<unsigned char[]>(new unsigned char[output_buffer_len]), output_buffer_len);
 	auto ptr = output.first.get();
 	Vec2i output_point;
 	for (output_point.y = 0; output_point.y < output_size.y; output_point.y++)

@@ -1,7 +1,7 @@
 #pragma once
 
 #ifndef WL_SHM_FORMAT_ENUM
-#	define WL_SHM_FORMAT_ENUM
+#define WL_SHM_FORMAT_ENUM
 /**
  * @ingroup iface_wl_shm
  * pixel formats

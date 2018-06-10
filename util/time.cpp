@@ -16,6 +16,6 @@ std::chrono::steady_clock::time_point program_start_time = std::chrono::steady_c
 double get_time()
 {
 	return (std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now() -
-	program_start_time))
-	.count();
+																	  program_start_time))
+		.count();
 }
