@@ -1,14 +1,16 @@
 #include "gtk_display.h"
 
-#include "logger.h"
+#include "util/logger.h"
 
 #include <unistd.h>
 #include <functional>
 
+#ifdef DEFAULT_DISPLAY_GTK
 std::unique_ptr<Display> Display::get()
 {
 	return std::make_unique<GtkDisplay>(epdif_logical_size, epdif_flip, epdif_swap_x_y);
 }
+#endif
 
 GtkDisplay::GtkDisplay(Vec2i size_, Vec2<bool> flip_, bool swap_x_y_)
 	: external_size{size_},

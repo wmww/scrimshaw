@@ -40,7 +40,7 @@ file(GLOB epdif_display_sources
 set(epdif_libs)
 
 file(GLOB emulator_sources
-	emulator/*.cpp)
+     emulator/*.cpp)
 
 file(GLOB display_test_sources
      main/display_test_main.cpp)
@@ -56,8 +56,8 @@ if (WIRING_PI_LIB)
 else()
     message("Wiring Pi not found")
     add_definitions(-DEMULATED_WIRING_PI)
-	set(scrimshaw_sources ${scrimshaw_sources}
-		${emulator_sources})
+    set(scrimshaw_sources ${scrimshaw_sources}
+        ${emulator_sources})
 endif()
 
 find_package(PkgConfig REQUIRED)
@@ -72,19 +72,27 @@ if(gtk3_FOUND)
     # Add other flags to the compiler
     add_definitions(${GTK3_CFLAGS_OTHER})
 
+    if (WIRING_PI_LIB)
+    else()
+        add_definitions(-DDEFAULT_DISPLAY_EPDIF)
+        add_definitions(-DEMULATED_WIRING_PI)
+        set(scrimshaw_libs ${scrimshaw_libs}
+            ${gtk3_LIBRARIES})
+        set(scrimshaw_sources ${scrimshaw_sources}
+            ${gtk_display_sources})
+    endif()
+
     add_executable(test_gtk ${gtk_display_sources} ${display_test_sources} ${scrimshaw_sources})
     target_link_libraries(test_gtk
-                          ${gtk3_LIBRARIES}
                           ${scrimshaw_libs})
 
     add_executable(hedgehog_gtk ${gtk_display_sources} ${hedgehog_sources} ${scrimshaw_sources})
     target_link_libraries(hedgehog_gtk
-                          ${gtk3_LIBRARIES}
                           ${hedgehog_libs}
                           ${scrimshaw_libs})
-
 else()
     message("GTK not found")
+    add_definitions(-DDEFAULT_DISPLAY_EPDIF)
 endif()
 
 add_executable(test_epdif ${epdif_display_sources} ${display_test_sources} ${scrimshaw_sources})
@@ -92,7 +100,10 @@ target_link_libraries(test_epdif
                       ${epdif_libs}
                       ${scrimshaw_libs})
 
-add_executable(hedgehog_epdif ${epdif_display_sources} ${hedgehog_sources} ${scrimshaw_sources})
+add_executable(hedgehog_epdif
+               ${epdif_display_sources}
+               ${hedgehog_sources}
+               ${scrimshaw_sources})
 target_link_libraries(hedgehog_epdif
                       ${epdif_libs}
                       ${hedgehog_libs}
