@@ -1,5 +1,5 @@
 #include "pixel_buffer.h"
-#include "logger.h"
+#include "util/logger.h"
 
 #include "wl_shm_format.h"
 

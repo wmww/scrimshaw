@@ -46,7 +46,6 @@ file(GLOB display_test_sources
      main/display_test_main.cpp)
 
 include_directories(".")
-include_directories("util")
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(gtk3 gtk+-3.0)

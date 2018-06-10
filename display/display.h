@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include "vec2.h"
+#include "util/vec2.h"
 #include "pixel_buffer.h"
 
 Vec2i const epdif_logical_size{296, 128};

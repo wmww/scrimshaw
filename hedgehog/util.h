@@ -22,8 +22,8 @@ using std::weak_ptr;
 #include <functional>
 using std::function;
 
-#include "vec2.h"
-#include "logger.h"
+#include "util/vec2.h"
+#include "util/logger.h"
 
 typedef Vec2i V2i;
 typedef Vec2d V2d;

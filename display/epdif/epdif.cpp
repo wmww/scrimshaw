@@ -26,7 +26,7 @@
  */
 
 #include "epdif.h"
-#include "logger.h"
+#include "util/logger.h"
 #include <unistd.h>
 
 #ifdef EMULATED_WIRING_PI

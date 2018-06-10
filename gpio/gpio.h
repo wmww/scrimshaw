@@ -1,9 +1,6 @@
 #pragma once
 
-#include <memory>
-
-using std::unique_ptr;
-using std::make_unique;
+#include <util/std.h>
 
 class Gpio
 {

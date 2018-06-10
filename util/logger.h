@@ -1,8 +1,5 @@
 #pragma once
-
-#include <string>
-
-using std::to_string;
+#include "util/std.h"
 
 enum LogLevel { LOG_MESSAGE, LOG_WARNING, LOG_FATAL };
 

@@ -2,7 +2,7 @@
 
 #include "epdif_driver.h"
 
-#include "logger.h"
+#include "util/logger.h"
 
 #include <cmath>
 #include <unistd.h>
