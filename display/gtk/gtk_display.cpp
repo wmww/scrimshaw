@@ -5,12 +5,10 @@
 #include <unistd.h>
 #include <functional>
 
-#ifdef DEFAULT_DISPLAY_GTK
 std::unique_ptr<Display> Display::get()
 {
 	return std::make_unique<GtkDisplay>(epdif_logical_size, epdif_flip, epdif_swap_x_y);
 }
-#endif
 
 GtkDisplay::GtkDisplay(Vec2i size_, Vec2<bool> flip_, bool swap_x_y_)
 	: external_size{size_},
@@ -63,6 +61,11 @@ GtkDisplay::GtkDisplay(Vec2i size_, Vec2<bool> flip_, bool swap_x_y_)
 				}
 				usleep(0.2 * 1000000);
 				draw_window();
+				while (gtk_events_pending())
+				{
+					gtk_main_iteration();
+				}
+				usleep(0.2 * 1000000);
 				should_commit = false;
 			}
 			while (gtk_events_pending())

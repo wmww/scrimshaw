@@ -15,12 +15,10 @@ EpdifDisplay::Pins const epdif_pins = {
 	24, // BUSY
 };
 
-#ifdef DEFAULT_DISPLAY_EPDIF
 std::unique_ptr<Display> Display::get()
 {
 	return std::make_unique<EpdifDisplay>(epdif_pins, epdif_logical_size, epdif_flip, epdif_swap_x_y);
 }
-#endif
 
 EpdifDisplay::EpdifDisplay(Pins const& pins, Vec2i size_, Vec2<bool> flip_, bool swap_x_y_)
 	: epd{std::make_unique<EpdDriver>(pins, size_, flip_, swap_x_y_)}, size{size_}
