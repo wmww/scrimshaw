@@ -221,6 +221,9 @@ void EpdDriver::Sleep()
 
 bool EpdDriver::set_mode(DisplayMode new_mode)
 {
+	if (mode == new_mode)
+		return true;
+
 	if (new_mode == DisplayMode::off)
 	{
 		Sleep();

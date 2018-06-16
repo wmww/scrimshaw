@@ -74,18 +74,18 @@ void EpdifDisplay::draw(PixelBuffer buffer, Vec2i lower_left)
 
 void EpdifDisplay::commit()
 {
-	executor.run(
-		[this, buffers = std::make_shared<std::vector<std::pair<PixelBuffer, Vec2i>>>(move(pending_buffers))]() {
-			assert_else(epd->set_mode(DisplayMode::full_update), return );
-			for (auto& i : *buffers)
-			{
-				pending_buffer.copy_from_pixel_buffer(&i.first, i.second);
-				epd->SetFrameMemory(move(i.first), i.second);
-			}
-			if (!buffers->empty())
-			{
+	if (!pending_buffers.empty())
+	{
+		executor.run(
+			[this, buffers = std::make_shared<std::vector<std::pair<PixelBuffer, Vec2i>>>(move(pending_buffers))]() {
+				assert_else(epd->set_mode(DisplayMode::full_update), return );
+				for (auto& i : *buffers)
+				{
+					pending_buffer.copy_from_pixel_buffer(&i.first, i.second);
+					epd->SetFrameMemory(move(i.first), i.second);
+				}
 				should_commit = true;
-			}
-		});
-	pending_buffers.clear();
+			});
+		pending_buffers.clear();
+	}
 }
