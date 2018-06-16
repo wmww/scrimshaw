@@ -28,7 +28,7 @@
 
 #include "util/vec2.h"
 #include "gpio/gpio.h"
-#include "pixel_buffer.h"
+#include "display/pixel_buffer.h"
 #include "epdif_display.h"
 
 // EPD1IN54 commands
