@@ -11,6 +11,8 @@ int main()
 	log_message("got display");
 
 	auto size = display->get_size();
+
+	// draw a circle into a pixel buffer
 	PixelBuffer pixels{};
 	pixels.create_empty(size);
 	Vec2i i;

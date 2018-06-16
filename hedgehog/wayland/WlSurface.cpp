@@ -69,8 +69,8 @@ const struct wl_surface_interface WlSurface::Impl::surfaceInterface = {
 			debug("wl_surface.damage called");
 			// TODO: OPTIMIZATION: only repaint damaged region
 			IMPL_FROM(resource);
-			warning("got damage: " + to_string(x) + ", " + to_string(y) + ", " + to_string(width) + ", " +
-					to_string(height));
+			log_message("got damage: " + to_string(x) + ", " + to_string(y) + ", " + to_string(width) + ", " +
+						to_string(height));
 			impl->isDamaged = true;
 		},
 	.frame =
@@ -98,7 +98,6 @@ const struct wl_surface_interface WlSurface::Impl::surfaceInterface = {
 			struct wl_resource* buffer = impl->bufferResourceRaw;
 			if (buffer != nullptr && impl->isDamaged)
 			{
-				warning("committing buffer");
 				// EGLint texture_format;
 				ASSERT_ELSE(Backend::instance, return );
 				// Display * display = (Display *)Backend::instance->getXDisplay();

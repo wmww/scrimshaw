@@ -42,7 +42,9 @@ EpdDriver::EpdDriver(EpdifDisplay::Pins const& pins, Vec2i size_, Vec2<bool> fli
 	  cs_pin{Gpio::instance()->output(pins.cs)},
 	  busy_pin{Gpio::instance()->input(pins.busy)},
 	  spi_channel{Gpio::instance()->spi(pins.spi_channel)}
-{}
+{
+	log_message("created EpdDriver with new GPIO class");
+}
 
 int EpdDriver::Init(const unsigned char* lut)
 {
