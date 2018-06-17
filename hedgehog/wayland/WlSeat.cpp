@@ -24,8 +24,8 @@ struct WlSeat::Impl : Resource::Data
 	Resource pointer;
 	Resource keyboard;
 	// these are ONLY used to see if the last surface to receive input matches the current one
-	wl_resource* lastPointerSurfaceRaw = nullptr;
-	// wl_resource * lastKeyboardSurfaceRaw = nullptr;
+	Resource lastPointerSurfaceRaw;
+	Resource lastKeyboardSurfaceRaw;
 
 	// static
 	static std::unordered_map<wl_client*, weak_ptr<Impl>> clientToImpl;
@@ -134,11 +134,11 @@ void WlSeat::pointerMotion(V2d position, Resource surface)
 	ASSERT_ELSE(surface.isValid(), return );
 	Resource pointer = impl->pointer;
 	auto fixedPos = Vec2<wl_fixed_t>(wl_fixed_from_double(position.x), wl_fixed_from_double(position.y));
-	if (impl->lastPointerSurfaceRaw != surface.getRaw())
+	if (impl->lastPointerSurfaceRaw.getRaw() != surface.getRaw())
 	{
 		if (pointer.check(WL_POINTER_ENTER_SINCE_VERSION))
 		{
-			impl->lastPointerSurfaceRaw = surface.getRaw();
+			impl->lastPointerSurfaceRaw = surface;
 
 			wl_pointer_send_enter(
 				pointer.getRaw(), WaylandServer::nextSerialNum(), surface.getRaw(), fixedPos.x, fixedPos.y);
@@ -166,10 +166,10 @@ void WlSeat::pointerLeave(Resource surface)
 		debug("client has not created the needed objects");
 		return;
 	}
-	ASSERT_ELSE(impl->lastPointerSurfaceRaw != nullptr, return );
-	ASSERT_ELSE(impl->lastPointerSurfaceRaw == surface.getRaw(), return );
+	ASSERT_ELSE(impl->lastPointerSurfaceRaw.isValid(), return );
+	ASSERT_ELSE(impl->lastPointerSurfaceRaw.getRaw() == surface.getRaw(), return );
 	Resource pointer = impl->pointer;
-	impl->lastPointerSurfaceRaw = nullptr;
+	impl->lastPointerSurfaceRaw = {};
 	if (pointer.check(WL_POINTER_LEAVE_SINCE_VERSION))
 	{
 		wl_pointer_send_leave(pointer.getRaw(), WaylandServer::nextSerialNum(), surface.getRaw());
@@ -189,8 +189,8 @@ void WlSeat::pointerClick(uint button, bool down, Resource surface)
 		debug("client has not created the needed objects");
 		return;
 	}
-	ASSERT_ELSE(impl->lastPointerSurfaceRaw != nullptr, return );
-	ASSERT_ELSE(impl->lastPointerSurfaceRaw == surface.getRaw(), return );
+	ASSERT_ELSE(impl->lastPointerSurfaceRaw.isValid(), return );
+	ASSERT_ELSE(impl->lastPointerSurfaceRaw.getRaw() == surface.getRaw(), return );
 	Resource pointer = impl->pointer;
 
 	if (pointer.check(WL_POINTER_BUTTON_SINCE_VERSION))
@@ -222,11 +222,24 @@ void WlSeat::keyPress(uint key, bool down, Resource surface)
 
 	WlArray<uint> keysDownArray; // it will be empty for now
 
-	if (keyboard.check(WL_KEYBOARD_ENTER_SINCE_VERSION))
+	if (impl->lastKeyboardSurfaceRaw.getRaw() != surface.getRaw())
 	{
-		debug("keyboard entering surface");
-		wl_keyboard_send_enter(
-			keyboard.getRaw(), WaylandServer::nextSerialNum(), surface.getRaw(), keysDownArray.getRaw());
+		if (impl->lastKeyboardSurfaceRaw.isValid())
+		{
+			if (keyboard.check(WL_KEYBOARD_LEAVE_SINCE_VERSION))
+			{
+				debug("keyboard leaving surface");
+				wl_keyboard_send_leave(
+					keyboard.getRaw(), WaylandServer::nextSerialNum(), impl->lastKeyboardSurfaceRaw.getRaw());
+			}
+		}
+		if (keyboard.check(WL_KEYBOARD_ENTER_SINCE_VERSION))
+		{
+			debug("keyboard entering surface");
+			wl_keyboard_send_enter(
+				keyboard.getRaw(), WaylandServer::nextSerialNum(), surface.getRaw(), keysDownArray.getRaw());
+			impl->lastKeyboardSurfaceRaw = surface;
+		}
 	}
 	if (keyboard.check(WL_KEYBOARD_KEY_SINCE_VERSION))
 	{
@@ -236,11 +249,6 @@ void WlSeat::keyPress(uint key, bool down, Resource surface)
 							 timeSinceStartMili(),
 							 key,
 							 down ? WL_KEYBOARD_KEY_STATE_PRESSED : WL_KEYBOARD_KEY_STATE_RELEASED);
-	}
-	if (keyboard.check(WL_KEYBOARD_LEAVE_SINCE_VERSION))
-	{
-		debug("keyboard leaving surface");
-		wl_keyboard_send_leave(keyboard.getRaw(), WaylandServer::nextSerialNum(), surface.getRaw());
 	}
 }
 
