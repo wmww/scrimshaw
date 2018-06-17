@@ -70,7 +70,7 @@ const struct wl_surface_interface WlSurface::Impl::surfaceInterface = {
 			// TODO: OPTIMIZATION: only repaint damaged region
 			IMPL_FROM(resource);
 			debug("got damage: " + to_string(x) + ", " + to_string(y) + ", " + to_string(width) + ", " +
-						to_string(height));
+				  to_string(height));
 			impl->isDamaged = true;
 		},
 	.frame =
@@ -194,14 +194,8 @@ WlSurface WlSurface::getFrom(Resource resource)
 	return out;
 }
 
-double last_frame_callback_time = 0;
-
 void WlSurface::runFrameCallbacks()
 {
-	double current_time = timeSinceStart();
-	if (current_time < last_frame_callback_time + frame_callback_delay)
-		return;
-	last_frame_callback_time = current_time;
 	for (auto i : Impl::frameCallbacks)
 	{
 		ASSERT_THEN(i.isValid())

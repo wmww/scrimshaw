@@ -23,6 +23,4 @@ public:
 private:
 	struct Impl;
 	weak_ptr<Impl> impl; // can be null
-
-	static constexpr double frame_callback_delay = 2.0;
 };
