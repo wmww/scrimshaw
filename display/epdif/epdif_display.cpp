@@ -34,7 +34,6 @@ EpdifDisplay::EpdifDisplay(Pins const& pins, Vec2i size_, Vec2<bool> flip_, bool
 			if (should_commit)
 			{
 				bool buffer_damaged = last_buffer.copy_from_pixel_buffer(&pending_buffer, {});
-				buffer_damaged = true;
 
 				if (buffer_damaged)
 				{

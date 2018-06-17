@@ -23,7 +23,6 @@ struct WlSeat::Impl : Resource::Data
 	Resource seat;
 	Resource pointer;
 	Resource keyboard;
-	// these are ONLY used to see if the last surface to receive input matches the current one
 	Resource lastPointerSurfaceRaw;
 	Resource lastKeyboardSurfaceRaw;
 

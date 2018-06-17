@@ -16,7 +16,6 @@ unique_ptr<Backend> makeScrimshawBackend();
 
 Backend::Backend()
 {
-	/*
 	// TODO: don't leak keymap and context memory
 	struct xkb_rule_names rules;
 	// all these environment vars are empty on my setup
@@ -31,8 +30,7 @@ Backend::Backend()
 	ASSERT_THEN(keymap) { keymapString = xkb_keymap_get_as_string(keymap, XKB_KEYMAP_FORMAT_TEXT_V1); }
 	if (keymapString == "")
 		warning("keymap string is empty");
-	*/
-	keymapString = literalKeymap;
+	// keymapString = literalKeymap;
 }
 
 void Backend::setup(Type type)
