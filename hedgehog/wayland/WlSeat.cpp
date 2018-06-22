@@ -17,6 +17,12 @@
 // change to toggle debug statements on and off
 #define debug debug_off
 
+const std::unordered_map<uint, uint32_t> modifier_map{
+	{42, 0x1}, // shift
+	{29, 0x4}, // control
+	{56, 0x2}, // alt
+};
+
 struct WlSeat::Impl : Resource::Data
 {
 	// instance data
@@ -25,6 +31,7 @@ struct WlSeat::Impl : Resource::Data
 	Resource keyboard;
 	Resource lastPointerSurfaceRaw;
 	Resource lastKeyboardSurfaceRaw;
+	uint32_t modifiers{0};
 
 	// static
 	static std::unordered_map<wl_client*, weak_ptr<Impl>> clientToImpl;
@@ -34,6 +41,8 @@ struct WlSeat::Impl : Resource::Data
 	static const struct wl_keyboard_interface keyboardInterface;
 	static const struct wl_seat_interface seatInterface;
 };
+
+int bit = 0;
 
 std::unordered_map<wl_client*, weak_ptr<WlSeat::Impl>> WlSeat::Impl::clientToImpl;
 
@@ -248,6 +257,23 @@ void WlSeat::keyPress(uint key, bool down, Resource surface)
 							 timeSinceStartMili(),
 							 key,
 							 down ? WL_KEYBOARD_KEY_STATE_PRESSED : WL_KEYBOARD_KEY_STATE_RELEASED);
+		auto modifier = modifier_map.find(key);
+		if (modifier != modifier_map.end())
+		{
+			if (down)
+				impl->modifiers = impl->modifiers | modifier->second;
+			else
+				impl->modifiers = impl->modifiers & (~modifier->second);
+			wl_keyboard_send_modifiers(keyboard.getRaw(), WaylandServer::nextSerialNum(), impl->modifiers, 0, 0, 0);
+		}
+		/*
+		if (down && key == 29) {
+			int state = 1 << bit;
+			bit++;
+			log_message("sending modifier state " + to_string(state));
+			wl_keyboard_send_modifiers(keyboard.getRaw(), WaylandServer::nextSerialNum(), state, 0, 0, 0);
+		}
+		*/
 	}
 }
 
