@@ -1,1 +1,1 @@
-tty-clock -cDd 10
+tty-clock -ctDd 10

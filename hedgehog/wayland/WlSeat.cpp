@@ -217,7 +217,7 @@ void WlSeat::pointerClick(uint button, bool down, Resource surface)
 
 void WlSeat::keyPress(uint key, bool down, Resource surface)
 {
-	debug("key '" + to_string(key) + "' " + (down ? "down" : "up"));
+	log_message("key '" + to_string(key) + "' " + (down ? "down" : "up"));
 
 	auto impl = getImplFromSurface(surface);
 
