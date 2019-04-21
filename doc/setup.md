@@ -31,7 +31,7 @@ font-size=9
 
 ## give user access to libinput
 ```
-sudo gpasswd -a $USER input
+sudo usermod -a -G input $USER
 ```
 logout or reboot is required to take effect
 
