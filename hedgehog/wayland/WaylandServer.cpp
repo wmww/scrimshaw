@@ -145,9 +145,8 @@ void setup()
 	display = wl_display_create();
 
 	// automatically find a free socket and connect it to the display
-	// wl_display_add_socket_auto(display);
-
-	wl_display_add_socket(display, "wayland-0");
+	wl_display_add_socket_auto(display);
+	// wl_display_add_socket(display, "wayland-0");
 
 	// create global objects
 	wl_global_create(display, &wl_compositor_interface, wl_compositor_MAX_VERSION, nullptr, compositorBind);
