@@ -7,6 +7,7 @@
 
 #include <thread>
 #include <atomic>
+#include <experimental/optional>
 
 class GtkDisplay : public Display
 {
@@ -21,7 +22,7 @@ public:
 
 private:
 	void draw_window();
-	void clear_window(PixelBuffer::ColorRGB color);
+	void redraw(std::experimental::optional<PixelBuffer::ColorRGB> clear_color);
 
 	PixelBuffer::ColorRGB const on_color{12, 27, 15};
 	PixelBuffer::ColorRGB const off_color{198, 243, 204};
@@ -33,6 +34,7 @@ private:
 	PixelBuffer::ColorRGB* const pixels;
 	GtkWidget* window;
 	GtkWidget* canvas;
+	std::experimental::optional<PixelBuffer::ColorRGB> clear_color; // draws actual window contents if nullopt
 	GdkPixbuf* const pixbuf;
 
 	std::atomic<bool> die{false};

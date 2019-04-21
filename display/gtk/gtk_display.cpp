@@ -48,19 +48,19 @@ GtkDisplay::GtkDisplay(Vec2i size_, Vec2<bool> flip_, bool swap_x_y_)
 			executor.iteration();
 			if (should_commit)
 			{
-				clear_window(on_color);
+				redraw(on_color);
 				while (gtk_events_pending())
 				{
 					gtk_main_iteration();
 				}
 				usleep(0.2 * 1000000);
-				clear_window(off_color);
+				redraw(off_color);
 				while (gtk_events_pending())
 				{
 					gtk_main_iteration();
 				}
 				usleep(0.2 * 1000000);
-				draw_window();
+				redraw(std::experimental::nullopt);
 				while (gtk_events_pending())
 				{
 					gtk_main_iteration();
@@ -184,25 +184,30 @@ void GtkDisplay::draw_window()
 		return;
 	cairo_rectangle_int_t cairo_rect = {0, 0, internal_size.x, internal_size.y};
 	cairo_region_t* region = cairo_region_create_rectangle(&cairo_rect);
-	GdkDrawingContext* drawing_context = gdk_window_begin_draw_frame(gtk_widget_get_window(canvas), region);
+	GdkWindow* window = gtk_widget_get_window(canvas);
+	GdkDrawingContext* drawing_context = gdk_window_begin_draw_frame(window, region);
 	cairo_region_destroy(region);
 	cairo_t* cairo_context = gdk_drawing_context_get_cairo_context(drawing_context);
-	gdk_cairo_set_source_pixbuf(cairo_context, pixbuf, 0, 0);
-	cairo_paint(cairo_context);
-	gdk_window_end_draw_frame(gtk_widget_get_window(canvas), drawing_context);
+	if (clear_color)
+	{
+		auto color = clear_color.value();
+		cairo_set_source_rgb(cairo_context, color.r / 255.0, color.g / 255.0, color.b / 255.0);
+		cairo_rectangle(cairo_context, 0, 0, internal_size.x, internal_size.y);
+		cairo_fill(cairo_context);
+	}
+	else
+	{
+		gdk_cairo_set_source_pixbuf(cairo_context, pixbuf, 0, 0);
+		cairo_paint(cairo_context);
+	}
+	gdk_window_end_draw_frame(window, drawing_context);
 }
 
-void GtkDisplay::clear_window(PixelBuffer::ColorRGB color)
+void GtkDisplay::redraw(std::experimental::optional<PixelBuffer::ColorRGB> clear_color)
 {
 	if (die)
 		return;
+	this->clear_color = clear_color;
 	cairo_rectangle_int_t cairo_rect = {0, 0, internal_size.x, internal_size.y};
-	cairo_region_t* region = cairo_region_create_rectangle(&cairo_rect);
-	GdkDrawingContext* drawing_context = gdk_window_begin_draw_frame(gtk_widget_get_window(canvas), region);
-	cairo_region_destroy(region);
-	cairo_t* cairo_context = gdk_drawing_context_get_cairo_context(drawing_context);
-	cairo_set_source_rgb(cairo_context, color.r / 255.0, color.g / 255.0, color.b / 255.0);
-	cairo_rectangle(cairo_context, 0, 0, internal_size.x, internal_size.y);
-	cairo_fill(cairo_context);
-	gdk_window_end_draw_frame(gtk_widget_get_window(canvas), drawing_context);
+	gdk_window_invalidate_rect(gtk_widget_get_window(window), &cairo_rect, FALSE);
 }
