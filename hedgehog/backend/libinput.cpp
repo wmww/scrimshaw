@@ -70,12 +70,18 @@ struct
 
 static const struct libinput_interface libinput_impl = {
 	.open_restricted = +[](const char* path, int flags, void* _backend) -> int {
-		debug("libinput_interface.open_restricted called, opening '" + string(path) + "'");
 		int ret = open(path, flags);
 		if (ret >= 0)
+		{
+			debug("libinput_interface.open_restricted opened '" + string(path) + "'");
 			return ret;
+		}
+
 		else
+		{
+			log_warning("libinput_interface.open_restricted failed to open '" + string(path) + "'");
 			return -errno;
+		}
 	},
 	.close_restricted =
 		+[](int fd, void* _backend) {
